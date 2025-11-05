@@ -1,0 +1,224 @@
+/* --- VARIABLES Y ESTILOS GLOBALES --- */
+:root {
+    --bg-color: #000;
+    --primary-text-color: #fff;
+    --secondary-text-color: #b3b3b3;
+    --bg-sidebar-color: #000;
+    --bg-main-color: #121212;
+    --bg-card-color: #181818;
+    --bg-player-color: #181818;
+    --bg-active-row: #282828;
+    --bg-hover-card: #282828;
+    --accent-color: #1db954;
+    --border-radius: 8px;
+    --sidebar-width: 300px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text-color);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* --- ESTRUCTURA PRINCIPAL --- */
+.spotify-container {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "sidebar main"
+        "player player";
+    height: 100vh;
+    gap: 8px;
+    padding: 8px;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: var(--bg-sidebar-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.main-content {
+    grid-area: main;
+    background-color: var(--bg-main-color);
+    border-radius: var(--border-radius);
+    overflow-y: auto;
+}
+
+.player-bar {
+    grid-area: player;
+}
+
+/* Scrollbar para el contenido principal */
+.main-content::-webkit-scrollbar {
+    width: 12px;
+}
+.main-content::-webkit-scrollbar-thumb {
+    background-color: #5a5a5a;
+}
+.main-content::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+.sidebar-nav, .library {
+    background-color: var(--bg-card-color);
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+}
+.sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
+.sidebar-nav li a {
+    color: var(--secondary-text-color);
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+    transition: color 0.2s;
+}
+.sidebar-nav li a:hover { color: var(--primary-text-color); }
+.sidebar-nav .fas { font-size: 24px; width: 24px; }
+
+.library { flex-grow: 1; display: flex; flex-direction: column; }
+.library-header { display: flex; justify-content: space-between; align-items: center; padding: 8px; }
+.library-button { background: none; border: none; color: var(--secondary-text-color); font-weight: bold; display: flex; align-items: center; gap: 16px; cursor: pointer; padding: 0; }
+.library-button:hover { color: var(--primary-text-color); }
+.library-button .fas { font-size: 24px; }
+.icon-button { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 16px; padding: 8px; }
+.icon-button:hover { color: var(--primary-text-color); }
+
+.library-filters { display: flex; gap: 8px; padding: 8px 8px; }
+.chip { background-color: var(--bg-active-row); color: var(--primary-text-color); padding: 4px 12px; border-radius: 20px; font-size: 14px; cursor: pointer; }
+
+.library-content { overflow-y: auto; flex-grow: 1; }
+.library-content::-webkit-scrollbar { display: none; /* Oculta scrollbar en la librería */ }
+.library-search { display: flex; justify-content: space-between; align-items: center; color: var(--secondary-text-color); padding: 8px; }
+.playlist-list { list-style: none; padding: 0; margin: 0; }
+.playlist-item { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: var(--border-radius); cursor: pointer; transition: background-color 0.2s; }
+.playlist-item:hover { background-color: var(--bg-active-row); }
+.playlist-item.active { background-color: var(--bg-active-row); }
+.playlist-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; }
+.playlist-item img.liked-songs { background: linear-gradient(135deg, #4e29de, #b034e3); display: flex; align-items: center; justify-content: center; }
+.playlist-info { display: flex; flex-direction: column; }
+.playlist-name { color: var(--primary-text-color); font-weight: 500; }
+.playlist-details { font-size: 14px; color: var(--secondary-text-color); }
+
+
+/* --- CONTENIDO PRINCIPAL (MAIN) --- */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.search-bar { flex-grow: 1; max-width: 360px; position: relative; }
+.search-bar .fas { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--secondary-text-color); }
+.search-bar input { width: 100%; background-color: var(--bg-hover-card); border: none; border-radius: 20px; padding: 10px 10px 10px 36px; color: var(--primary-text-color); }
+.user-profile { display: flex; align-items: center; gap: 8px; }
+.profile-pic { width: 28px; height: 28px; background-color: #535353; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: none; cursor: pointer; }
+
+.content-wrapper { padding: 16px; }
+.content-section h2 { margin-bottom: 16px; }
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background-color: var(--bg-card-color);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: relative;
+}
+.card:hover { background-color: var(--bg-hover-card); }
+.card:hover .card-play-button { opacity: 1; transform: translateY(0); }
+.card img { width: 100%; border-radius: var(--border-radius); margin-bottom: 12px; }
+.card h3 { margin: 0 0 4px 0; font-size: 16px; }
+.card p { margin: 0; font-size: 14px; color: var(--secondary-text-color); }
+.card-play-button {
+    position: absolute;
+    bottom: 80px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 24px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 8px rgba(0,0,0,.3);
+}
+
+
+/* --- REPRODUCTOR (FOOTER) --- */
+.player-bar {
+    background-color: var(--bg-player-color);
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    gap: 24px;
+}
+.now-playing { display: flex; align-items: center; gap: 12px; }
+.now-playing img { width: 56px; height: 56px; border-radius: 4px; }
+.track-info { display: flex; flex-direction: column; }
+.track-name { font-weight: 500; }
+.artist-name { font-size: 12px; color: var(--secondary-text-color); }
+.now-playing .far { color: var(--secondary-text-color); cursor: pointer; margin-left: 16px; }
+
+.player-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.control-buttons { display: flex; align-items: center; gap: 16px; }
+.control-buttons .small { font-size: 16px; }
+.play-button {
+    width: 32px;
+    height: 32px;
+    background-color: var(--primary-text-color);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.play-button:hover { transform: scale(1.05); }
+
+.progress-bar-container { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 12px; color: var(--secondary-text-color); }
+.progress-bar { flex-grow: 1; height: 4px; background-color: #5e5e5e; border-radius: 2px; }
+.progress { height: 100%; background-color: var(--primary-text-color); border-radius: 2px; }
+.progress-bar:hover .progress { background-color: var(--accent-color); }
+
+.device-controls { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+.volume-bar { width: 100px; height: 4px; background-color: #5e5e5e; border-radius: 2px; }
+.volume-bar:hover .progress { background-color: var(--accent-color); }
+
+/* Efecto gris para botones de reproductor inactivos */
+.player-controls .player-btn {
+    filter: brightness(0.7);
+    transition: filter 0.2s ease-in-out;
+}
+
+/* El brillo vuelve a la normalidad al pasar el mouse */
+.player-controls .player-btn:hover {
+    filter: brightness(1);
+}

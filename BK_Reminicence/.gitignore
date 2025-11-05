@@ -1,0 +1,52 @@
+# ==== ENTORNOS VIRTUALES ====
+venv/
+.venv/
+env/
+.env/
+
+# ==== CACHÉS DE PYTHON ====
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==== MIGRACIONES (excepto __init__.py) ====
+migrations/
+*/migrations/
+!*/migrations/__init__.py
+
+# ==== ARCHIVOS DE CONFIGURACIÓN SENSIBLES ====
+secret.json
+*.env
+.env.*
+*.key
+
+# ==== BASES DE DATOS LOCALES ====
+db.sqlite3
+*.sqlite3
+
+# ==== ARCHIVOS DE LOGS Y TEMPORALES ====
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.tmp
+
+# ==== ARCHIVOS DE DJANGO ====
+media/
+staticfiles/
+static/img/
+local_settings.py
+
+# ==== ARCHIVOS DE IDEs Y SISTEMA ====
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ==== COMPILADOS O CACHE DE DEPENDENCIAS ====
+*.egg-info/
+*.egg
+dist/
+build/
