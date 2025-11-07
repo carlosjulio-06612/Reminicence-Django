@@ -46,7 +46,7 @@ Incluye módulos para:
    ```bash
    git clone https://github.com/carlosjulio-06612/Reminicence-Django.git
    cd Reminicence-Django/BK_Reminicence
-````
+   ```
 
 2. **Crea y activa el entorno virtual**
 
