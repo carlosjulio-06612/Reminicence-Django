@@ -1,0 +1,454 @@
+/* ============================================
+   SIDEBAR - Barra lateral izquierda
+   Paleta: Morado/Azul moderna
+   ============================================ */
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, rgba(15, 15, 30, 0.95) 0%, rgba(10, 10, 20, 0.98) 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+    overflow-y: auto;
+    border-right: 1px solid rgba(106, 17, 203, 0.15);
+    position: relative;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, var(--primary-purple) 50%, transparent 100%);
+    opacity: 0.3;
+}
+
+/* Navegación principal */
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #b8b8d1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-nav a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent-gradient);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.sidebar-nav a:hover {
+    color: #ffffff;
+    background: rgba(106, 17, 203, 0.1);
+    transform: translateX(4px);
+}
+
+.sidebar-nav a:hover::before {
+    opacity: 1;
+}
+
+.sidebar-nav a.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.15) 0%, rgba(37, 117, 252, 0.15) 100%);
+}
+
+.sidebar-nav a.active::before {
+    opacity: 1;
+}
+
+.sidebar-nav i {
+    font-size: 1.5rem;
+    width: 24px;
+    transition: transform 0.3s;
+}
+
+.sidebar-nav a:hover i {
+    transform: scale(1.1);
+}
+
+/* Biblioteca */
+.library {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.5) 0%, rgba(15, 15, 30, 0.7) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(106, 17, 203, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(106, 17, 203, 0.1);
+}
+
+.library-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    color: #b8b8d1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.library-button:hover {
+    color: #ffffff;
+    background: rgba(106, 17, 203, 0.1);
+}
+
+.library-button i {
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+}
+
+.library-button:hover i {
+    transform: scale(1.1);
+}
+
+/* Acciones de biblioteca */
+.library-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.library-actions button {
+    background: none;
+    border: none;
+    color: #b8b8d1;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.library-actions button:hover {
+    color: var(--primary-purple);
+    background: rgba(106, 17, 203, 0.1);
+    transform: scale(1.1);
+}
+
+/* Filtros de biblioteca */
+.library-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.chip {
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.2) 0%, rgba(37, 117, 252, 0.2) 100%);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(106, 17, 203, 0.3);
+}
+
+.chip:hover {
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.3) 0%, rgba(37, 117, 252, 0.3) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
+}
+
+.chip.active {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.4);
+}
+
+/* Contenido de biblioteca */
+.library-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.library-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #b8b8d1;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(26, 26, 46, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(106, 17, 203, 0.1);
+    transition: all 0.3s;
+}
+
+.library-search:hover {
+    border-color: rgba(106, 17, 203, 0.3);
+    background: rgba(26, 26, 46, 0.7);
+}
+
+.library-search i {
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.library-search i:hover {
+    color: var(--primary-purple);
+    background: rgba(106, 17, 203, 0.1);
+    transform: scale(1.1);
+}
+
+.library-search span {
+    font-weight: 500;
+}
+
+/* Lista de playlists */
+.playlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.playlist-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent-gradient);
+    opacity: 0;
+    border-radius: 0 4px 4px 0;
+    transition: opacity 0.3s;
+}
+
+.playlist-item:hover {
+    background: rgba(106, 17, 203, 0.1);
+    transform: translateX(4px);
+}
+
+.playlist-item:hover::before {
+    opacity: 1;
+}
+
+.playlist-item.active {
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.15) 0%, rgba(37, 117, 252, 0.15) 100%);
+}
+
+.playlist-item.active::before {
+    opacity: 1;
+}
+
+.playlist-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s;
+}
+
+.playlist-item:hover img {
+    transform: scale(1.05);
+}
+
+.playlist-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    gap: 4px;
+}
+
+.playlist-name {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s;
+}
+
+.playlist-item:hover .playlist-name {
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.playlist-details {
+    color: #b8b8d1;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Scrollbar personalizado para la biblioteca */
+.sidebar::-webkit-scrollbar,
+.library-content::-webkit-scrollbar,
+.playlist-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.library-content::-webkit-scrollbar-track,
+.playlist-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.library-content::-webkit-scrollbar-thumb,
+.playlist-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
+    border-radius: 4px;
+    border: 2px solid rgba(15, 15, 30, 0.5);
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.library-content::-webkit-scrollbar-thumb:hover,
+.playlist-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--secondary-blue) 0%, var(--primary-purple) 100%);
+}
+
+/* Firefox scrollbar */
+.sidebar,
+.library-content,
+.playlist-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-purple) transparent;
+}
+
+/* Estado vacío */
+.library-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    flex: 1;
+    color: #b8b8d1;
+}
+
+.library-empty i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.library-empty p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-nav a,
+    .playlist-item,
+    .chip,
+    .library-button {
+        transition: none;
+    }
+}
+
+.sidebar-nav a:focus-visible,
+.playlist-item:focus-visible,
+.chip:focus-visible,
+.library-button:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+/* Animación de entrada */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.playlist-item {
+    animation: slideInLeft 0.3s ease-out backwards;
+}
+
+.playlist-item:nth-child(1) { animation-delay: 0.05s; }
+.playlist-item:nth-child(2) { animation-delay: 0.1s; }
+.playlist-item:nth-child(3) { animation-delay: 0.15s; }
+.playlist-item:nth-child(4) { animation-delay: 0.2s; }
+.playlist-item:nth-child(5) { animation-delay: 0.25s; }

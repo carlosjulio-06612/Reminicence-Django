@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Configuración{% endblock %} - Reminiscence</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS EN ORDEN CORRECTO -->
+    
+    <!-- 1. Variables primero (definen todo el sistema) -->
+    <link rel="stylesheet" href="{% static 'users/css/variables.css' %}">
+
+    <!-- 2. Base y layout -->
+    <link rel="stylesheet" href="{% static 'users/css/base.css' %}">
+
+    <!-- 3. Componentes (orden lógico) -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/settings/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/settings/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/settings/modal.css' %}">
+
+    <!-- 4. Sistemas de layout -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/grid.css' %}">
+
+    <!-- 5. Animaciones -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/animations.css' %}">
+
+    <!-- 6. Utilidades -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/utilities.css' %}">
+
+    <!-- 7. Responsive (última prioridad) -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/responsive.css' %}">
+
+    <!-- 8. Accesibilidad -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/accessibility.css' %}">
+
+    <!-- 9. OVERRIDE - CRÍTICO: DEBE IR AL FINAL -->
+    <link rel="stylesheet" href="{% static 'users/css/settings/override.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Contenido sin restricciones -->
+    {% block content %}{% endblock %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,98 @@
+/* ============================================
+   BASE - Estilos Base y Layout Principal
+   ============================================ */
+
+/* IMPORTANTE: Fondo oscuro para body */
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+}
+
+/* Wrapper Principal */
+.settings-wrapper {
+    min-height: 100vh;
+    padding: 2rem;
+    max-width: none;
+    width: 100%;
+    background: var(--bg-primary);
+}
+
+/* Container */
+.container {
+    max-width: none !important;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.container h2 {
+    color: var(--text-primary);
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.container hr {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, var(--primary-purple) 20%, var(--secondary-blue) 80%, transparent 100%);
+    margin: 1.5rem auto 2.5rem;
+    opacity: 0.6;
+    max-width: 200px;
+    border-radius: 2px;
+}
+
+/* Header - ESTILOS CRÍTICOS */
+.settings-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.settings-header h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--accent-gradient) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    margin: 0 0 1.5rem 0;
+    letter-spacing: -0.5px;
+}
+
+.settings-header hr {
+    border: none !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent 0%, var(--primary-purple) 20%, var(--secondary-blue) 80%, transparent 100%) !important;
+    margin: 1.5rem auto 2.5rem !important;
+    opacity: 0.6 !important;
+    max-width: 200px !important;
+    border-radius: 2px !important;
+}
+
+/* Footer de Acciones */
+.settings-footer-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.settings-footer-actions .btn {
+    min-width: 200px;
+}
+
+.settings-footer-actions form {
+    margin: 0;
+}

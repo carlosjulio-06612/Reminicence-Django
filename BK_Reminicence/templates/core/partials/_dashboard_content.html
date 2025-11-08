@@ -1,0 +1,252 @@
+<!-- core/templates/core/partials/_dashboard_content.html (CORREGIDO) -->
+
+{% if spotify_connected %}
+    <!-- Botón de sincronización y estadísticas -->
+    <div class="db-stats-container">
+    <div class="db-stats-info">
+        <h3 class="db-stats-title">Base de Datos Local</h3>
+        <p class="db-stats-details">
+            <span class="stat-item">
+                <i class="fas fa-list"></i>
+                <strong>{{ db_stats.playlists_count }}</strong> playlists
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-music"></i>
+                <strong>{{ db_stats.songs_count }}</strong> canciones
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-microphone"></i>
+                <strong>{{ db_stats.artists_count }}</strong> artistas
+            </span>
+        </p>
+    </div>
+    <a href="{% url 'core:sync_spotify' %}" class="sync-button">
+        <i class="fas fa-sync-alt"></i>
+        <span>Sincronizar Datos</span>
+    </a>
+</div>
+
+<style>
+.db-stats-container {
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.1) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(106, 17, 203, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.db-stats-container:hover {
+    border-color: rgba(106, 17, 203, 0.4);
+    box-shadow: 0 12px 40px rgba(106, 17, 203, 0.2);
+    transform: translateY(-2px);
+}
+
+.db-stats-info {
+    flex: 1;
+}
+
+.db-stats-title {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.db-stats-details {
+    color: #b8b8d1;
+    margin: 0;
+    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-item i {
+    color: #6a11cb;
+    font-size: 1rem;
+}
+
+.stat-item strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sync-button {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    padding: 0.875rem 1.75rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(106, 17, 203, 0.3);
+    font-size: 0.95rem;
+}
+
+.sync-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(106, 17, 203, 0.5);
+}
+
+.sync-button:active {
+    transform: translateY(0);
+}
+
+.sync-button i {
+    font-size: 1rem;
+    animation: none;
+}
+
+.sync-button:hover i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .db-stats-container {
+        flex-direction: column;
+        gap: 1.25rem;
+        text-align: center;
+        padding: 1.25rem;
+    }
+    
+    .db-stats-details {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .sync-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .db-stats-details {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    
+    .db-stats-title {
+        font-size: 1.1rem;
+    }
+    
+    .sync-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    .db-stats-container,
+    .sync-button {
+        transition: none;
+    }
+    
+    .sync-button:hover i {
+        animation: none;
+    }
+}
+
+.sync-button:focus-visible {
+    outline: 2px solid #6a11cb;
+    outline-offset: 2px;
+}
+</style>
+    
+    <!-- Sección: Tus Top Canciones -->
+    <section class="content-section">
+        <h2>Tus canciones favoritas</h2>
+        <div class="card-container">
+            {% for track in top_tracks %}
+            <div class="card">
+                <img src="{{ track.image|default:'https://via.placeholder.com/150' }}" alt="{{ track.name }}">
+                <div class="card-play-button"><i class="fas fa-play"></i></div>
+                <h3>{{ track.name }}</h3>
+                <p>{{ track.artist }}</p>
+            </div>
+            {% empty %}
+            <p style="color: #b3b3b3;">No hay canciones disponibles</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Sección: Escuchado Recientemente -->
+    <section class="content-section">
+        <h2>Escuchado recientemente</h2>
+        <div class="card-container">
+            {% for track in recently_played %}
+            <div class="card">
+                <img src="{{ track.image|default:'https://via.placeholder/150' }}" alt="{{ track.name }}">
+                <div class="card-play-button"><i class="fas fa-play"></i></div>
+                <h3>{{ track.name }}</h3>
+                <p>{{ track.artist }}</p>
+            </div>
+            {% empty %}
+            <p style="color: #b3b3b3;">No se encontraron reproducciones recientes.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Sección: Tus Artistas Favoritos -->
+    <section class="content-section">
+        <h2>Tus artistas favoritos</h2>
+        <div class="card-container">
+            {% for artist in top_artists %}
+            <div class="card">
+                <img src="{{ artist.image|default:'https://via.placeholder.com/150' }}" alt="{{ artist.name }}" style="border-radius: 50%;">
+                <div class="card-play-button"><i class="fas fa-play"></i></div>
+                <h3>{{ artist.name }}</h3>
+                <p>Artista</p>
+            </div>
+            {% empty %}
+            <p style="color: #b3b3b3;">No se encontraron artistas favoritos.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+{% else %}
+    <!-- Mensaje cuando no está conectado -->
+    <section class="content-section" style="text-align: center; padding: 3rem;">
+        <h2>Conecta tu cuenta de Spotify</h2>
+        <p style="color: #b3b3b3; margin: 1rem 0 2rem;">Para ver tus playlists, canciones y artistas favoritos</p>
+        <!-- URL Corregida con la etiqueta de Django -->
+        <a href="{% url 'spotify_api:spotify_login' %}" style="background-color: #1db954; color: white; padding: 1rem 2rem; border-radius: 2rem; text-decoration: none; display: inline-block;">
+            <i class="fab fa-spotify"></i> Conectar con Spotify
+        </a>
+    </section>
+{% endif %}

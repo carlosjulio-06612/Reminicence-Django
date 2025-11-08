@@ -1,0 +1,143 @@
+/* ============================================
+   FORMS - Formularios MEJORADOS
+   ============================================ */
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Labels mejorados */
+form label,
+.card-body label,
+label {
+    display: block !important;
+    color: var(--text-primary) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+    transition: var(--transition);
+}
+
+.form-control-wrapper {
+    position: relative;
+}
+
+/* Inputs mejorados con !important para forzar estilos */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea,
+form select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    width: 100% !important;
+    padding: 1rem 1.25rem !important;
+    background: rgba(15, 15, 30, 0.9) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+    transition: var(--transition);
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+}
+
+/* Placeholders */
+form input::placeholder,
+form textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-muted) !important;
+    transition: var(--transition);
+}
+
+/* Focus states */
+form input:focus,
+form textarea:focus,
+form select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none !important;
+    border-color: var(--accent-purple) !important;
+    background: rgba(20, 20, 40, 0.95) !important;
+    box-shadow: 0 0 0 4px rgba(106, 17, 203, 0.2), 0 8px 24px rgba(106, 17, 203, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+form input:focus::placeholder,
+form textarea:focus::placeholder,
+input:focus::placeholder,
+textarea:focus::placeholder {
+    transform: translateX(8px);
+    opacity: 0.7;
+}
+
+/* Textarea específico */
+form textarea,
+textarea {
+    resize: vertical !important;
+    min-height: 120px !important;
+    line-height: 1.5 !important;
+}
+
+/* Help text / small text */
+form small,
+.form-text,
+.helptext {
+    display: block;
+    color: var(--text-muted) !important;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Django form errors */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+.errorlist li {
+    color: var(--danger-color) !important;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid var(--danger-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+}
+
+/* Django form fields */
+.form-row {
+    margin-bottom: 1.5rem;
+}
+
+/* Paragraph forms (Django default) */
+form p {
+    margin-bottom: 1.5rem;
+}
+
+form p label {
+    display: block !important;
+    color: var(--text-primary) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+}
+
+form p input,
+form p textarea,
+form p select {
+    width: 100% !important;
+    padding: 1rem 1.25rem !important;
+    background: rgba(15, 15, 30, 0.9) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+}

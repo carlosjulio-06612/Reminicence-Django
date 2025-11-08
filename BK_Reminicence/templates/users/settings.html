@@ -1,0 +1,32 @@
+{% extends "users/base_settings.html" %}
+
+{% load static %}
+
+{% block title %}Configuración de la Cuenta{% endblock %}
+
+{# NO necesitas extra_css porque ya está en base_settings.html #}
+
+{% block content %}
+<div class="settings-wrapper">
+    <div class="settings-header">
+        <h2>Configuración</h2>
+        <hr>
+    </div>
+
+    <!-- Incluir el layout de las tarjetas -->
+    {% include "users/partials/_settings_layout.html" %}
+
+    <!-- FOOTER CON BOTONES -->
+    <div class="settings-footer-actions">
+        <a href="{% url 'core:index' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Inicio
+        </a>
+        <form action="{% url 'users:logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!-- core/templates/core/partials/_top_bar.html -->
+
+<header class="top-bar">
+                <div class="nav-arrows">
+                    <button class="icon-button" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="icon-button"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="search-bar">
+                     <i class="fas fa-search"></i>
+                    <input type="text" placeholder="¿Qué quieres reproducir?">
+                </div>
+                <div class="user-profile">
+                    <button class="icon-button"><i class="fas fa-bell"></i></button>
+                    <button class="icon-button"><i class="fas fa-users"></i></button>
+                    
+                    {% if user.is_authenticated %}
+                        <!-- Este enlace ahora lleva a la página de configuración -->
+                        <a href="{% url 'users:settings' %}" class="profile-pic" style="text-decoration: none;">
+                            {{ user.username.0|upper }}
+                        </a>
+                    {% else %}
+                        <!-- Si no está autenticado, lo lleva a la página de login -->
+                        <a href="{% url 'users:login' %}" class="profile-pic" style="text-decoration: none;">
+                            U
+                        </a>
+                    {% endif %}
+                    
+                </div>
+</header>

@@ -1,12 +1,20 @@
+<!-- core/templates/core/index.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reminicence</title>
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-    <!-- Para los iconos, usaremos Font Awesome. Debes registrarte y obtener tu propio kit -->
+    <title>Reminiscence</title>
+    
+    <!-- Importar CSS en orden -->
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/player.css' %}">
+    
     <script src="https://kit.fontawesome.com/TU_PROPIO_KIT.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -14,134 +22,21 @@
     <div class="spotify-container">
 
         <!-- BARRA LATERAL IZQUIERDA (BIBLIOTECA) -->
-        <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="#"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
-                    <li><a href="#"><i class="fas fa-search"></i> <span>Buscar</span></a></li>
-                </ul>
-            </nav>
-
-            <div class="library">
-                <div class="library-header">
-                    <button class="library-button">
-                        <i class="fas fa-book"></i>
-                        <span>Tu biblioteca</span>
-                    </button>
-                    <button class="icon-button">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-
-                <div class="library-filters">
-                    <span class="chip">Playlists</span>
-                    <span class="chip">Artistas</span>
-                    <span class="chip">Álbumes</span>
-                </div>
-
-                <div class="library-content">
-                    <div class="library-search">
-                        <i class="fas fa-search"></i>
-                        <span>Recientes</span>
-                        <i class="fas fa-list"></i>
-                    </div>
-                    
-                    <ul class="playlist-list">
-                        <!-- INICIO: Bucle de Django para las playlists del usuario -->
-                        <!-- {% for playlist in user_playlists %} -->
-                        <li class="playlist-item">
-                            <img src="https://via.placeholder.com/48" alt="Playlist cover">
-                            <div class="playlist-info">
-                                <span class="playlist-name">Nombre de la Playlist</span>
-                                <span class="playlist-details">Tipo • Creador</span>
-                            </div>
-                        </li>
-                        <!-- {% endfor %} -->
-                        <!-- FIN: Bucle de Django -->
-                    </ul>
-                </div>
-            </div>
-        </aside>
+        {% include 'core/partials/_sidebar.html' %}
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="main-content">
-            <header class="top-bar">
-                <div class="nav-arrows">
-                    <button class="icon-button" disabled><i class="fas fa-chevron-left"></i></button>
-                    <button class="icon-button"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div class="search-bar">
-                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="¿Qué quieres reproducir?">
-                </div>
-                <div class="user-profile">
-                    <!-- Lógica de Django: Si el usuario está autenticado, mostrar su perfil -->
-                    <button class="icon-button"><i class="fas fa-bell"></i></button>
-                    <button class="icon-button"><i class="fas fa-users"></i></button>
-                    <button class="profile-pic">U</button>
-                </div>
-            </header>
+            
+            <!-- BARRA SUPERIOR -->
+            {% include 'core/partials/_top_bar.html' %}
 
-            <div class="content-wrapper">
-                <section class="content-section">
-                    <h2>Creado para ti</h2>
-                    <div class="card-container">
-                        <!-- INICIO: Bucle de Django para las tarjetas -->
-                        <div class="card">
-                            <img src="https://via.placeholder.com/150" alt="Card image">
-                            <div class="card-play-button"><i class="fas fa-play"></i></div>
-                            <h3>Título de la Tarjeta</h3>
-                            <p>Descripción de la tarjeta...</p>
-                        </div>
-                        <!-- FIN: Bucle de Django -->
-                    </div>
-                </section>
+            <!-- CONTENIDO DINÁMICO DEL DASHBOARD -->
+            {% include 'core/partials/_dashboard_content.html' %}
 
-                <section class="content-section">
-                    <h2>Escuchado recientemente</h2>
-                    <div class="card-container">
-                        <!-- Bucle de Django aquí también -->
-                    </div>
-                </section>
-            </div>
         </main>
 
         <!-- REPRODUCTOR INFERIOR -->
-        <footer class="player-bar">
-            <div class="now-playing">
-                <img src="https://via.placeholder.com/56" alt="Now playing cover">
-                <div class="track-info">
-                    <span class="track-name">--</span>
-                    <span class="artist-name">--</span>
-                </div>
-                 <i class="far fa-heart"></i>
-            </div>
-            <div class="player-controls">
-                <div class="control-buttons">
-                    <button class="icon-button small player-btn"><i class="fas fa-random"></i></button>
-                    <button class="icon-button small player-btn"><i class="fas fa-step-backward"></i></button>
-                    <button class="icon-button play-button"><i class="fas fa-play"></i></button>
-                    <button class="icon-button small player-btn"><i class="fas fa-step-forward"></i></button>
-                    <button class="icon-button small player-btn"><i class="fas fa-redo"></i></button>
-                </div>
-                <div class="progress-bar-container">
-                    <span>--:--</span>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%;"></div>
-                    </div>
-                    <span>--:--</span>
-                </div>
-            </div>
-            <div class="device-controls">
-                <button class="icon-button small"><i class="fas fa-microphone-alt"></i></button>
-                <button class="icon-button small"><i class="fas fa-list-ol"></i></button>
-                <button class="icon-button small"><i class="fas fa-desktop"></i></button>
-                <button class="icon-button small"><i class="fas fa-volume-up"></i></button>
-                <div class="volume-bar">
-                    <div class="progress" style="width: 70%;"></div>
-                </div>
-            </div>
-        </footer>
+        {% include 'core/partials/_player_bar.html' %}
 
     </div>
 
