@@ -1,60 +1,62 @@
 <!-- core/templates/core/partials/_player_bar.html -->
 
-<footer class="player-bar">
+{% load static %} <!-- AÑADIR ESTA LÍNEA AL PRINCIPIO DE TODO -->
+
+{% if user.is_authenticated and user.spotifyusertoken %}
+<footer class="player-bar" id="spotify-player-bar">
+    <!-- SECCIÓN IZQUIERDA: INFORMACIÓN DE LA CANCIÓN -->
     <div class="now-playing">
-        <img src="https://via.placeholder.com/56" alt="Portada de la canción">
+        <img src="https://via.placeholder.com/56" alt="Portada de la canción" id="player-album-art">
         <div class="track-info">
-            <span class="track-name">Selecciona una canción</span>
-            <span class="artist-name">Artista desconocido</span>
+            <span class="track-name" id="player-track-name">Conecta con Spotify</span>
+            <span class="artist-name" id="player-artist-name">...</span>
         </div>
         <button class="icon-button small" title="Me gusta">
             <i class="far fa-heart"></i>
         </button>
     </div>
-    
+
+    <!-- SECCIÓN CENTRAL: CONTROLES Y PROGRESO -->
     <div class="player-controls">
         <div class="control-buttons">
-            <button class="icon-button small player-btn" title="Aleatorio">
+            <button class="icon-button small player-btn" title="Aleatorio" disabled>
                 <i class="fas fa-random"></i>
             </button>
-            <button class="icon-button small player-btn" title="Anterior">
+            <button class="icon-button small player-btn" title="Anterior" id="player-previous-btn">
                 <i class="fas fa-step-backward"></i>
             </button>
-            <button class="play-button" title="Reproducir">
+            <button class="play-button" title="Reproducir" id="player-play-pause-btn" data-is-playing="false">
                 <i class="fas fa-play"></i>
             </button>
-            <button class="icon-button small player-btn" title="Siguiente">
+            <button class="icon-button small player-btn" title="Siguiente" id="player-next-btn">
                 <i class="fas fa-step-forward"></i>
             </button>
-            <button class="icon-button small player-btn" title="Repetir">
+            <button class="icon-button small player-btn" title="Repetir" disabled>
                 <i class="fas fa-redo"></i>
             </button>
         </div>
         
         <div class="progress-bar-container">
-            <span class="time-current">0:00</span>
+            <span class="time-current" id="player-time-current">0:00</span>
             <div class="progress-bar">
-                <div class="progress" style="width: 0%;"></div>
+                <div class="progress" id="player-progress" style="width: 0%;"></div>
             </div>
-            <span class="time-total">0:00</span>
+            <span class="time-total" id="player-time-total">0:00</span>
         </div>
     </div>
     
+    <!-- SECCIÓN DERECHA: OTROS CONTROLES (Volumen, etc.) -->
     <div class="device-controls">
-        <button class="icon-button small" title="Letra">
-            <i class="fas fa-microphone-alt"></i>
-        </button>
-        <button class="icon-button small" title="Cola de reproducción">
-            <i class="fas fa-list-ol"></i>
-        </button>
-        <button class="icon-button small" title="Conectar a un dispositivo">
-            <i class="fas fa-desktop"></i>
-        </button>
-        <button class="icon-button small" title="Volumen">
-            <i class="fas fa-volume-up"></i>
-        </button>
+        <button class="icon-button small" title="Letra" disabled><i class="fas fa-microphone-alt"></i></button>
+        <button class="icon-button small" title="Cola de reproducción" disabled><i class="fas fa-list-ol"></i></button>
+        <button class="icon-button small" title="Conectar a un dispositivo" disabled><i class="fas fa-desktop"></i></button>
+        <button class="icon-button small" title="Volumen" disabled><i class="fas fa-volume-up"></i></button>
         <div class="volume-bar">
             <div class="progress" style="width: 70%;"></div>
         </div>
     </div>
 </footer>
+
+<!-- El script se carga aquí, después de que exista el HTML del reproductor -->
+<script src="{% static 'js/spotify-player.js' %}"></script>
+{% endif %}

@@ -1,8 +1,10 @@
-/* ============================================
-   DASHBOARD - Contenido principal
-   Paleta: Morado/Azul con acentos modernos
-   ============================================ */
+/* ==========================================================================
+   DASHBOARD - ESTILOS DEL CONTENIDO PRINCIPAL
+   ========================================================================== */
 
+/* -----------------------------------------
+   1. Variables de Tema (Theme)
+   ----------------------------------------- */
 :root {
     --primary-purple: #6a11cb;
     --secondary-blue: #2575fc;
@@ -15,13 +17,21 @@
     --shadow-hover: 0 12px 48px rgba(106, 17, 203, 0.4);
 }
 
+
+/* -----------------------------------------
+   2. Layout y Estructura de Secciones
+   ----------------------------------------- */
 .content-wrapper {
     padding: 0 2rem 2rem;
+    min-height: calc(100vh - 200px); /* Evita que el player oculte contenido */
 }
 
-/* Secciones de contenido */
 .content-section {
     margin-bottom: 2.5rem;
+}
+
+.content-section:last-child {
+    margin-bottom: 3rem; /* Espacio extra al final */
 }
 
 .content-section h2 {
@@ -29,31 +39,32 @@
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
     background: var(--accent-gradient);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
 }
 
-/* Contenedor de tarjetas */
+
+/* -----------------------------------------
+   3. Tarjetas (Canciones, Artistas, etc.)
+   ----------------------------------------- */
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.75rem;
 }
 
-/* Tarjetas de canciones/artistas */
 .card {
     background: var(--card-bg);
     padding: 1.25rem;
     border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card::before {
@@ -89,8 +100,18 @@
     transition: transform 0.3s;
 }
 
+.card img.artist-image {
+    border-radius: 50%;
+}
+
 .card:hover img {
     transform: scale(1.05);
+}
+
+.card h3, .card p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .card h3 {
@@ -98,25 +119,18 @@
     font-size: 1rem;
     margin: 0.75rem 0 0.5rem;
     font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .card p {
     color: var(--text-secondary);
     font-size: 0.875rem;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
-/* Botón de reproducción en tarjetas */
 .card-play-button {
     position: absolute;
     right: 1.25rem;
-    bottom: calc(1.25rem + 60px);
+    bottom: calc(1.25rem + 60px); /* Ajustado a la altura del texto */
     width: 52px;
     height: 52px;
     background: var(--accent-gradient);
@@ -143,13 +157,17 @@
 .card-play-button i {
     color: #ffffff;
     font-size: 1.3rem;
-    margin-left: 3px;
+    margin-left: 3px; /* Centrado visual del icono de play */
 }
 
-/* Estadísticas de base de datos */
+
+/* -----------------------------------------
+   4. Barra de Estadísticas de la DB
+   ----------------------------------------- */
 .db-stats-container {
     background: linear-gradient(135deg, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.1) 100%);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-radius: 16px;
@@ -158,22 +176,54 @@
     align-items: center;
     border: 1px solid rgba(106, 17, 203, 0.2);
     box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.db-stats-container h3 {
+.db-stats-container:hover {
+    border-color: rgba(106, 17, 203, 0.4);
+    box-shadow: 0 12px 40px rgba(106, 17, 203, 0.2);
+    transform: translateY(-2px);
+}
+
+.db-stats-info {
+    flex: 1;
+}
+
+.db-stats-title {
     background: var(--accent-gradient);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 0;
+    margin: 0 0 0.75rem 0;
     font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.db-stats-container p {
+.db-stats-details {
     color: var(--text-secondary);
-    margin: 0.5rem 0 0;
+    margin: 0;
     font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-item i {
+    color: var(--primary-purple);
+    font-size: 1rem;
+}
+
+.stat-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .sync-button {
@@ -186,10 +236,10 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(106, 17, 203, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sync-button:hover {
@@ -197,13 +247,29 @@
     box-shadow: 0 8px 24px rgba(106, 17, 203, 0.5);
 }
 
-/* Mensaje de conexión */
+.sync-button:hover i {
+    animation: spin 1s linear infinite;
+}
+
+
+/* -----------------------------------------
+   5. Mensaje de Conexión a Spotify
+   ----------------------------------------- */
 .connect-message {
     text-align: center;
     padding: 4rem 2rem;
     background: linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(37, 117, 252, 0.05) 100%);
     border-radius: 20px;
     border: 1px solid rgba(106, 17, 203, 0.1);
+}
+
+.connect-message > i.fa-spotify {
+    font-size: 5rem;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
 }
 
 .connect-message h2 {
@@ -231,8 +297,8 @@
     gap: 10px;
     font-weight: 600;
     font-size: 1.05rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 24px rgba(106, 17, 203, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .connect-button:hover {
@@ -244,7 +310,10 @@
     font-size: 1.2rem;
 }
 
-/* Estados vacíos y de carga */
+
+/* -----------------------------------------
+   6. Estados Vacíos (Empty States)
+   ----------------------------------------- */
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -257,7 +326,76 @@
     opacity: 0.3;
 }
 
-/* Responsive */
+
+/* -----------------------------------------
+   7. Funcionalidad (Fixes)
+   ----------------------------------------- */
+/* Soluciona que el botón de play "robe" el clic de la tarjeta */
+.card .card-play-button {
+    pointer-events: none;
+}
+
+/* Indica que toda la tarjeta es un elemento interactivo */
+.card.song-item {
+    cursor: pointer;
+}
+
+
+/* -----------------------------------------
+   8. Animaciones y Transiciones
+   ----------------------------------------- */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-out backwards;
+}
+
+/* Animación escalonada para las tarjetas */
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+
+/* -----------------------------------------
+   9. Accesibilidad y Media Queries
+   ----------------------------------------- */
+/* Desactivar animaciones para usuarios que lo prefieran */
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .sync-button,
+    .connect-button,
+    .card-play-button {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Estilos de foco para navegación con teclado */
+.card:focus-visible,
+.sync-button:focus-visible,
+.connect-button:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 4px;
+}
+
+/* ---- Media Queries para Responsividad ---- */
 @media (max-width: 1024px) {
     .card-container {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -266,25 +404,35 @@
 }
 
 @media (max-width: 768px) {
-    .card-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1.25rem;
-    }
-
     .content-wrapper {
         padding: 0 1rem 1rem;
     }
-
+    
     .content-section h2 {
         font-size: 1.5rem;
         margin-bottom: 1.25rem;
     }
 
+    .card-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1.25rem;
+    }
+
     .db-stats-container {
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.25rem;
         text-align: center;
         padding: 1.25rem;
+    }
+    
+    .db-stats-details {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .sync-button {
+        width: 100%;
+        justify-content: center;
     }
 
     .connect-message {
@@ -331,213 +479,4 @@
         padding: 0.875rem 1.5rem;
         font-size: 0.95rem;
     }
-}
-
-/* Animaciones */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.card {
-    animation: fadeInUp 0.5s ease-out backwards;
-}
-
-.card:nth-child(1) { animation-delay: 0.05s; }
-.card:nth-child(2) { animation-delay: 0.1s; }
-.card:nth-child(3) { animation-delay: 0.15s; }
-.card:nth-child(4) { animation-delay: 0.2s; }
-.card:nth-child(5) { animation-delay: 0.25s; }
-.card:nth-child(6) { animation-delay: 0.3s; }
-
-/* Accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-    .card,
-    .sync-button,
-    .connect-button,
-    .card-play-button {
-        animation: none;
-        transition: none;
-    }
-}
-
-.card:focus-visible,
-.sync-button:focus-visible,
-.connect-button:focus-visible {
-    outline: 2px solid var(--primary-purple);
-    outline-offset: 4px;
-}
-
-/* Estilos adicionales para imágenes de artistas */
-.card img.artist-image {
-    border-radius: 50%;
-}
-
-/* Mensaje de conexión mejorado */
-.connect-message {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(37, 117, 252, 0.05) 100%);
-    border-radius: 20px;
-    border: 1px solid rgba(106, 17, 203, 0.1);
-}
-
-.connect-message > i {
-    font-size: 5rem;
-    background: var(--accent-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 1.5rem;
-}
-
-.connect-message h2 {
-    color: var(--text-primary);
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-}
-
-.connect-message p {
-    color: var(--text-secondary);
-    margin: 1rem 0 2.5rem;
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-
-.connect-button {
-    background: var(--accent-gradient);
-    color: white;
-    padding: 1.125rem 2.5rem;
-    border-radius: 50px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    font-size: 1.05rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 24px rgba(106, 17, 203, 0.4);
-}
-
-.connect-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(106, 17, 203, 0.6);
-}
-
-.connect-button i {
-    font-size: 1.2rem;
-}
-
-/* Estilos para db-stats-container */
-.db-stats-container {
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.1) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-radius: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid rgba(106, 17, 203, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.db-stats-container:hover {
-    border-color: rgba(106, 17, 203, 0.4);
-    box-shadow: 0 12px 40px rgba(106, 17, 203, 0.2);
-    transform: translateY(-2px);
-}
-
-.db-stats-info {
-    flex: 1;
-}
-
-.db-stats-title {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0 0 0.75rem 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.db-stats-details {
-    color: #b8b8d1;
-    margin: 0;
-    font-size: 0.95rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: center;
-}
-
-.stat-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.stat-item i {
-    color: #6a11cb;
-    font-size: 1rem;
-}
-
-.stat-item strong {
-    color: #ffffff;
-    font-weight: 600;
-}
-
-.sync-button:hover i {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Responsive para db-stats */
-@media (max-width: 768px) {
-    .db-stats-container {
-        flex-direction: column;
-        gap: 1.25rem;
-        text-align: center;
-        padding: 1.25rem;
-    }
-    
-    .db-stats-details {
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .sync-button {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Padding para evitar que el contenido quede debajo del player */
-.content-wrapper {
-    padding: 0 2rem 2rem;
-    min-height: calc(100vh - 200px); /* Espacio para que no se superponga */
-}
-
-/* Última sección con margen extra */
-.content-section:last-child {
-    margin-bottom: 3rem; /* Espacio extra en la última sección */
 }

@@ -8,25 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reminiscence</title>
     
+    <!-- Hojas de estilo generales -->
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/player.css' %}">
     
+    <!---logo---->
+    <link rel="icon" type="image/png" href="{% static 'img/icon.png' %}">
+    
+    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <div class="spotify-container">
 
+        <!-- 1. Carga la barra lateral (con las playlists clicables) -->
         {% include 'core/partials/_sidebar.html' %}
 
         <main class="main-content">
+            <!-- 2. Carga la barra superior -->
             {% include 'core/partials/_top_bar.html' %}
+            
+            <!-- 3. Carga el dashboard (con las tarjetas y la solución CSS integrada) -->
             {% include 'core/partials/_dashboard_content.html' %}
         </main>
 
+        <!-- 4. Carga el reproductor en la parte inferior -->
         {% include 'core/partials/_player_bar.html' %}
 
     </div>

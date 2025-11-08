@@ -5,11 +5,11 @@ from django.utils import timezone
 from datetime import datetime
 
 class SpotifyService:
+    """
+    Servicio para interactuar con la API de Spotify, manejando
+    automáticamente la autenticación y el refresco de tokens.
+    """
     def __init__(self, user):
-        """
-        Inicializa el servicio de Spotify, manejando automáticamente
-        la expiración y el refresco del token.
-        """
         self.user = user
         self.sp = None
         
@@ -18,13 +18,10 @@ class SpotifyService:
             spotify_token_obj = SpotifyUserToken.objects.filter(user=user).first()
             
             if not spotify_token_obj:
-                print(f"[INIT] No se encontró un SpotifyUserToken para {user.username}")
                 return
 
-            # 1. Crear el gestor de autenticación que sabe cómo refrescar tokens
             auth_manager = self.get_auth_manager()
             
-            # 2. Cargar la información del token desde la BD en un formato que spotipy entienda
             token_info = {
                 'access_token': spotify_token_obj.access_token,
                 'refresh_token': spotify_token_obj.refresh_token,
@@ -32,37 +29,27 @@ class SpotifyService:
                 'scope': spotify_token_obj.scope
             }
 
-            # 3. Verificar si el token ha expirado
             if auth_manager.is_token_expired(token_info):
-                print(f"[REFRESH] El token para {user.username} ha expirado. Refrescando...")
-                
-                # 4. Usar el refresh_token para obtener un nuevo access_token
                 new_token_info = auth_manager.refresh_access_token(token_info['refresh_token'])
                 
-                # 5. ¡CRUCIAL! Guardar el NUEVO token en la base de datos para el futuro
                 spotify_token_obj.access_token = new_token_info['access_token']
-                # Spotify no siempre devuelve un nuevo refresh token, así que conservamos el viejo si no viene uno nuevo
                 spotify_token_obj.refresh_token = new_token_info.get('refresh_token', spotify_token_obj.refresh_token)
                 spotify_token_obj.expires_at = timezone.make_aware(datetime.fromtimestamp(new_token_info['expires_at']))
                 spotify_token_obj.scope = new_token_info['scope']
                 spotify_token_obj.save()
                 
-                print(f"[REFRESH] Token refrescado y guardado correctamente.")
-                # Usar el token recién refrescado para esta sesión
                 token_info = new_token_info
 
-            # 6. Inicializar el cliente de Spotipy con un token garantizado de ser válido
             self.sp = spotipy.Spotify(auth=token_info['access_token'])
-            print(f"[INIT] SpotifyService inicializado correctamente para {user.username}")
 
-        except Exception as e:
-            import traceback
-            print(f"[INIT-ERROR] Error al inicializar SpotifyService: {e}")
-            traceback.print_exc()
+        except Exception:
+            # En caso de error, self.sp seguirá siendo None, y los métodos
+            # que lo usan devolverán listas vacías o None de forma segura.
+            pass
     
     @staticmethod
     def get_auth_manager():
-        """Retorna el manager de autenticación de Spotify"""
+        """Retorna el manager de autenticación de Spotify."""
         return SpotifyOAuth(
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
@@ -71,37 +58,26 @@ class SpotifyService:
         )
     
     def get_user_playlists(self):
-        """Obtiene las playlists del usuario"""
-        print(f"[PLAYLISTS] Llamado. sp existe: {self.sp is not None}")
-        
+        """Obtiene las playlists del usuario."""
         if not self.sp:
-            print("[PLAYLISTS] No hay cliente de Spotify inicializado")
             return []
         
         try:
-            print("[PLAYLISTS] Obteniendo playlists de Spotify...")
             playlists = self.sp.current_user_playlists(limit=50)
-            print(f"[PLAYLISTS] Playlists obtenidas: {len(playlists['items'])}")
-            
-            result = [{
+            return [{
                 'id': pl['id'],
                 'name': pl['name'],
+                'uri': pl['uri'],
                 'image': pl['images'][0]['url'] if pl['images'] else None,
                 'owner': pl['owner']['display_name'],
                 'tracks': pl['tracks']['total'],
                 'type': 'Playlist'
             } for pl in playlists['items']]
-            
-            print(f"[PLAYLISTS] Playlists procesadas: {len(result)}")
-            return result
-        except Exception as e:
-            print(f"[PLAYLISTS] Error: {e}")
-            import traceback
-            traceback.print_exc()
+        except Exception:
             return []
     
     def get_user_top_artists(self, limit=10):
-        """Obtiene los artistas más escuchados del usuario"""
+        """Obtiene los artistas más escuchados del usuario."""
         if not self.sp:
             return []
         
@@ -110,16 +86,16 @@ class SpotifyService:
             return [{
                 'id': artist['id'],
                 'name': artist['name'],
+                'uri': artist['uri'],
                 'image': artist['images'][0]['url'] if artist['images'] else None,
                 'genres': artist['genres'],
                 'popularity': artist['popularity']
             } for artist in artists['items']]
-        except Exception as e:
-            print(f"Error al obtener artistas: {e}")
+        except Exception:
             return []
     
     def get_user_top_tracks(self, limit=10):
-        """Obtiene las canciones más escuchadas del usuario"""
+        """Obtiene las canciones más escuchadas del usuario."""
         if not self.sp:
             return []
         
@@ -128,57 +104,50 @@ class SpotifyService:
             return [{
                 'id': track['id'],
                 'name': track['name'],
+                'uri': track['uri'],
                 'artist': ', '.join([artist['name'] for artist in track['artists']]),
                 'album': track['album']['name'],
                 'image': track['album']['images'][0]['url'] if track['album']['images'] else None,
                 'duration_ms': track['duration_ms']
             } for track in tracks['items']]
-        except Exception as e:
-            print(f"Error al obtener canciones: {e}")
+        except Exception:
             return []
     
     def get_recently_played(self, limit=20):
-        """Obtiene las canciones reproducidas recientemente"""
+        """Obtiene las canciones reproducidas recientemente."""
         if not self.sp:
             return []
         
         try:
             recent = self.sp.current_user_recently_played(limit=limit)
             return [{
+                'id': item['track']['id'],
                 'name': item['track']['name'],
+                'uri': item['track']['uri'],
                 'artist': ', '.join([artist['name'] for artist in item['track']['artists']]),
                 'album': item['track']['album']['name'],
                 'image': item['track']['album']['images'][0]['url'] if item['track']['album']['images'] else None,
                 'played_at': item['played_at']
             } for item in recent['items']]
-        except Exception as e:
-            print(f"Error al obtener reproducidos recientemente: {e}")
+        except Exception:
             return []
         
     def get_user_profile(self):
-        """Obtiene el perfil completo del usuario de Spotify"""
+        """Obtiene el perfil completo del usuario de Spotify."""
         if not self.sp:
             return None
         
         try:
-            print("[PROFILE] Obteniendo perfil del usuario...")
             user_profile = self.sp.current_user()
-            
-            profile_data = {
+            return {
                 'id': user_profile.get('id'),
                 'display_name': user_profile.get('display_name'),
                 'email': user_profile.get('email'),
                 'country': user_profile.get('country'),
                 'followers': user_profile.get('followers', {}).get('total', 0),
                 'image': user_profile.get('images')[0]['url'] if user_profile.get('images') else None,
-                'product': user_profile.get('product'),  # premium, free, etc
+                'product': user_profile.get('product'),
                 'uri': user_profile.get('uri')
             }
-            
-            print(f"[PROFILE] Perfil obtenido: {profile_data['display_name']}")
-            return profile_data
-        except Exception as e:
-            print(f"[PROFILE] Error al obtener perfil: {e}")
-            import traceback
-            traceback.print_exc()
+        except Exception:
             return None

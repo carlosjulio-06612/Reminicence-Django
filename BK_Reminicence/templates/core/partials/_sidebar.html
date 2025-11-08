@@ -1,5 +1,3 @@
-<!-- core/templates/core/partials/_sidebar.html (CORREGIDO) -->
-
 <aside class="sidebar">
     <nav class="sidebar-nav">
         <ul>
@@ -35,7 +33,8 @@
             <ul class="playlist-list">
                 {% if spotify_connected %}
                     {% for playlist in user_playlists %}
-                    <li class="playlist-item">
+                    <!-- CAMBIOS AQUÍ: Añadida la clase 'song-item' y el atributo 'data-spotify-uri' al <li> -->
+                    <li class="playlist-item song-item" data-spotify-uri="{{ playlist.uri }}">
                         <img src="{{ playlist.image|default:'https://via.placeholder.com/48' }}" alt="{{ playlist.name }}">
                         <div class="playlist-info">
                             <span class="playlist-name">{{ playlist.name }}</span>
