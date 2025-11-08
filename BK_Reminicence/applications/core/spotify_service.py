@@ -67,7 +67,7 @@ class SpotifyService:
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope="user-library-read user-top-read playlist-read-private user-read-recently-played"
+            scope="user-library-read user-top-read playlist-read-private user-read-recently-played user-read-email user-read-private"
         )
     
     def get_user_playlists(self):
@@ -154,3 +154,31 @@ class SpotifyService:
         except Exception as e:
             print(f"Error al obtener reproducidos recientemente: {e}")
             return []
+        
+    def get_user_profile(self):
+        """Obtiene el perfil completo del usuario de Spotify"""
+        if not self.sp:
+            return None
+        
+        try:
+            print("[PROFILE] Obteniendo perfil del usuario...")
+            user_profile = self.sp.current_user()
+            
+            profile_data = {
+                'id': user_profile.get('id'),
+                'display_name': user_profile.get('display_name'),
+                'email': user_profile.get('email'),
+                'country': user_profile.get('country'),
+                'followers': user_profile.get('followers', {}).get('total', 0),
+                'image': user_profile.get('images')[0]['url'] if user_profile.get('images') else None,
+                'product': user_profile.get('product'),  # premium, free, etc
+                'uri': user_profile.get('uri')
+            }
+            
+            print(f"[PROFILE] Perfil obtenido: {profile_data['display_name']}")
+            return profile_data
+        except Exception as e:
+            print(f"[PROFILE] Error al obtener perfil: {e}")
+            import traceback
+            traceback.print_exc()
+            return None

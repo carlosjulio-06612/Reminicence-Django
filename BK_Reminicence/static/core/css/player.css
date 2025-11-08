@@ -450,3 +450,12 @@
     outline-offset: 2px;
     border-radius: 4px;
 }
+
+/* Clases para tiempos del reproductor */
+.time-current,
+.time-total {
+    color: #b8b8d1;
+    font-size: 0.75rem;
+    min-width: 40px;
+    font-weight: 500;
+}

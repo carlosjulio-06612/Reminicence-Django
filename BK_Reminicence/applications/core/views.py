@@ -12,6 +12,7 @@ from applications.music.models import Playlist, Songs, Artists
 def index(request):
     """Vista principal que muestra el dashboard de Spotify"""
     context = {
+        'user_profile': None,  # ← Inicializado en None
         'user_playlists': [],
         'top_tracks': [],
         'recently_played': [],
@@ -39,6 +40,9 @@ def index(request):
             spotify_service = SpotifyService(request.user)
             
             if spotify_service.sp:
+                # Obtener perfil del usuario (incluyendo foto)
+                context['user_profile'] = spotify_service.get_user_profile()  # ← AGREGADO
+                
                 # Obtener datos de Spotify (para mostrar en tiempo real)
                 context['user_playlists'] = spotify_service.get_user_playlists()
                 context['top_tracks'] = spotify_service.get_user_top_tracks(limit=6)

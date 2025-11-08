@@ -373,3 +373,171 @@
     outline: 2px solid var(--primary-purple);
     outline-offset: 4px;
 }
+
+/* Estilos adicionales para imágenes de artistas */
+.card img.artist-image {
+    border-radius: 50%;
+}
+
+/* Mensaje de conexión mejorado */
+.connect-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(37, 117, 252, 0.05) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(106, 17, 203, 0.1);
+}
+
+.connect-message > i {
+    font-size: 5rem;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
+
+.connect-message h2 {
+    color: var(--text-primary);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.connect-message p {
+    color: var(--text-secondary);
+    margin: 1rem 0 2.5rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.connect-button {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 1.125rem 2.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(106, 17, 203, 0.4);
+}
+
+.connect-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(106, 17, 203, 0.6);
+}
+
+.connect-button i {
+    font-size: 1.2rem;
+}
+
+/* Estilos para db-stats-container */
+.db-stats-container {
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.1) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(106, 17, 203, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.db-stats-container:hover {
+    border-color: rgba(106, 17, 203, 0.4);
+    box-shadow: 0 12px 40px rgba(106, 17, 203, 0.2);
+    transform: translateY(-2px);
+}
+
+.db-stats-info {
+    flex: 1;
+}
+
+.db-stats-title {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.db-stats-details {
+    color: #b8b8d1;
+    margin: 0;
+    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-item i {
+    color: #6a11cb;
+    font-size: 1rem;
+}
+
+.stat-item strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sync-button:hover i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive para db-stats */
+@media (max-width: 768px) {
+    .db-stats-container {
+        flex-direction: column;
+        gap: 1.25rem;
+        text-align: center;
+        padding: 1.25rem;
+    }
+    
+    .db-stats-details {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .sync-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Padding para evitar que el contenido quede debajo del player */
+.content-wrapper {
+    padding: 0 2rem 2rem;
+    min-height: calc(100vh - 200px); /* Espacio para que no se superponga */
+}
+
+/* Última sección con margen extra */
+.content-section:last-child {
+    margin-bottom: 3rem; /* Espacio extra en la última sección */
+}

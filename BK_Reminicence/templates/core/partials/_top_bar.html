@@ -1,29 +1,44 @@
 <!-- core/templates/core/partials/_top_bar.html -->
 
 <header class="top-bar">
-                <div class="nav-arrows">
-                    <button class="icon-button" disabled><i class="fas fa-chevron-left"></i></button>
-                    <button class="icon-button"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div class="search-bar">
-                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="¿Qué quieres reproducir?">
-                </div>
-                <div class="user-profile">
-                    <button class="icon-button"><i class="fas fa-bell"></i></button>
-                    <button class="icon-button"><i class="fas fa-users"></i></button>
-                    
-                    {% if user.is_authenticated %}
-                        <!-- Este enlace ahora lleva a la página de configuración -->
-                        <a href="{% url 'users:settings' %}" class="profile-pic" style="text-decoration: none;">
-                            {{ user.username.0|upper }}
-                        </a>
+    <div class="nav-arrows">
+        <button class="icon-button" disabled>
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="icon-button">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="¿Qué quieres reproducir?">
+    </div>
+    
+    <div class="user-profile">
+        <button class="icon-button notification-button">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+        </button>
+        
+        <button class="icon-button">
+            <i class="fas fa-users"></i>
+        </button>
+        
+        {% if user.is_authenticated %}
+            <div class="profile-dropdown">
+                <a href="{% url 'users:settings' %}" class="profile-pic" title="{{ user.username }}">
+                    {% if user_profile and user_profile.image %}
+                        <img src="{{ user_profile.image }}" alt="{{ user.username }}" class="profile-img">
                     {% else %}
-                        <!-- Si no está autenticado, lo lleva a la página de login -->
-                        <a href="{% url 'users:login' %}" class="profile-pic" style="text-decoration: none;">
-                            U
-                        </a>
+                        {{ user.username.0|upper }}
                     {% endif %}
-                    
-                </div>
+                </a>
+            </div>
+        {% else %}
+            <a href="{% url 'users:login' %}" class="profile-pic" title="Iniciar sesión">
+                <i class="fas fa-user"></i>
+            </a>
+        {% endif %}
+    </div>
 </header>

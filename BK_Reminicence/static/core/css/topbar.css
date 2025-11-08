@@ -15,8 +15,8 @@
     top: 0;
     z-index: 10;
     border-bottom: 1px solid rgba(106, 17, 203, 0.1);
+    flex-shrink: 0;
 }
-
 /* Flechas de navegación */
 .nav-arrows {
     display: flex;
@@ -380,4 +380,24 @@
 
 .top-bar {
     animation: slideInDown 0.4s ease-out;
+}
+/* Imagen de perfil dentro del círculo */
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-pic {
+    overflow: hidden;
+    position: relative;
+}
+
+/* Asegurar que la letra inicial siga centrada si no hay imagen */
+.profile-pic:not(:has(img)) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

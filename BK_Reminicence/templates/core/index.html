@@ -8,34 +8,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reminiscence</title>
     
-    <!-- Importar CSS en orden -->
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/player.css' %}">
     
-    <script src="https://kit.fontawesome.com/TU_PROPIO_KIT.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <div class="spotify-container">
 
-        <!-- BARRA LATERAL IZQUIERDA (BIBLIOTECA) -->
         {% include 'core/partials/_sidebar.html' %}
 
-        <!-- CONTENIDO PRINCIPAL -->
         <main class="main-content">
-            
-            <!-- BARRA SUPERIOR -->
             {% include 'core/partials/_top_bar.html' %}
-
-            <!-- CONTENIDO DINÁMICO DEL DASHBOARD -->
             {% include 'core/partials/_dashboard_content.html' %}
-
         </main>
 
-        <!-- REPRODUCTOR INFERIOR -->
         {% include 'core/partials/_player_bar.html' %}
 
     </div>
