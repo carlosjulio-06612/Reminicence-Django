@@ -14,7 +14,6 @@ class SpotifyService:
         self.sp = None
         
         try:
-            # Asumimos que el modelo está en spotify_api.models
             from applications.spotify_api.models import SpotifyUserToken
             spotify_token_obj = SpotifyUserToken.objects.filter(user=user).first()
             

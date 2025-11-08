@@ -7,7 +7,6 @@ from . import views
 app_name = 'users'
 
 urlpatterns = [
-    # --- Tus URLs de Login, Logout y Registro ---
     path('login/', views.login_view, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
     path('register/', views.register_view.as_view(), name='register'),

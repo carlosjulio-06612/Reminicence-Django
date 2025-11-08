@@ -3,8 +3,6 @@
 from django.db import models
 from django.conf import settings
 
-# NOTA: He mapeado cada columna de tu SQL a un campo de Django.
-# Esto solucionará todos los errores de "Invalid field name(s)".
 
 class Artists(models.Model):
     artist_id = models.AutoField(primary_key=True)

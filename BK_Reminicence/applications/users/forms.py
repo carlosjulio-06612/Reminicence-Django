@@ -1,10 +1,8 @@
-# applications/users/forms.py
-
 from django import forms
-from django.contrib.auth.forms import UserCreationForm # <-- ¡Esta es la herramienta nativa!
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-# Creamos nuestra propia clase que HEREDA de la nativa de Django
+
 class UserRegisterForm(UserCreationForm):
     """
     Este formulario extiende el UserCreationForm nativo para
@@ -31,7 +29,6 @@ class UserProfileUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserProfileUpdateForm, self).__init__(*args, **kwargs)
-        # Añadir clases para que se vea bien con tu CSS
         self.fields['username'].widget.attrs.update({'class': 'form-control'})
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
         self.fields['first_name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Tu nombre'})

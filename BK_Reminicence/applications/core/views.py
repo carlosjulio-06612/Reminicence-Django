@@ -29,14 +29,11 @@ def index(request):
         spotify_token = SpotifyUserToken.objects.get(user=request.user)
         if spotify_token.access_token:
             context['spotify_connected'] = True
-            
-            # --- OBTENER ESTADÍSTICAS DE LA BD (CORREGIDO) ---
             # Contar playlists vinculadas a este usuario
             context['db_stats']['playlists_count'] = Playlist.objects.filter(user=request.user).count()
             # Contar TODAS las canciones y artistas en la base de datos
             context['db_stats']['songs_count'] = Songs.objects.count()
             context['db_stats']['artists_count'] = Artists.objects.count()
-            # --- FIN DE LA CORRECCIÓN ---
             
             # Inicializar servicio de Spotify
             spotify_service = SpotifyService(request.user)
@@ -75,17 +72,8 @@ def sync_spotify_data(request):
         sync_service = SpotifySyncService(request.user)
         results = sync_service.full_sync()
         
-        # Podrías agregar mensajes de éxito aquí
-        # from django.contrib import messages
-        # messages.success(request, f"Sincronización completada: {results['playlists']} playlists, {results['recently_played']} reproducciones")
         
     except Exception as e:
         print(f"Error durante sincronización: {e}")
-        # messages.error(request, "Error durante la sincronización")
     
     return redirect('core:index')
-
-
-# Ya no se necesitan estas vistas porque usas las de spotify_api
-# def spotify_login(request):
-# def spotify_callback(request):
