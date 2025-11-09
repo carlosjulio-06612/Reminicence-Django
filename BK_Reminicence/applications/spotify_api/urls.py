@@ -13,4 +13,8 @@ urlpatterns = [
     path('player/next/', views.next_track_playback, name='player_next'),
     path('player/previous/', views.previous_track_playback, name='player_previous'),
     path('player/start/', views.start_playback, name='player_start'),
+    path('player/seek/', views.seek_in_track, name='seek_track'),
+    path('player/shuffle/', views.shuffle_playback, name='shuffle_playback'),
+    path('player/repeat/', views.repeat_playback, name='repeat_playback'),
+    path('player/play/', views.play_spotify_uri, name='play_spotify_uri'),
 ]

@@ -480,3 +480,37 @@
         font-size: 0.95rem;
     }
 }
+/* Estilo para las secciones de contenido (Tus canciones favoritas, etc.) */
+.content-section {
+    margin-bottom: 2rem;
+}
+
+.content-section h2 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* El contenedor que crea la cuadrícula de tarjetas */
+.card-container {
+    display: grid;
+    /* Esto crea una cuadrícula responsive que se adapta al espacio disponible */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Estilos de la tarjeta individual (ya los tienes) */
+.card {
+    position: relative;
+    background-color: #181818;
+    border-radius: 8px;
+    padding: 16px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: #282828;
+}
+
+/* ... y el resto de los estilos de .card, .card-play-button, etc. ... */

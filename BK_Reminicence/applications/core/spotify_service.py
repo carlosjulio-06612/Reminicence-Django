@@ -151,3 +151,165 @@ class SpotifyService:
             }
         except Exception:
             return None
+        
+    # Pega estos tres nuevos métodos dentro de la clase SpotifyService
+
+    def get_artist_details(self, artist_id):
+        """Obtiene los detalles principales de un solo artista."""
+        if not self.sp:
+            return None
+        
+        try:
+            artist_data = self.sp.artist(artist_id)
+            return {
+                'id': artist_data['id'],
+                'name': artist_data['name'],
+                'image': artist_data['images'][0]['url'] if artist_data['images'] else None,
+                'followers': f"{artist_data['followers']['total']:,}" # Formatea el número 1,234,567
+            }
+        except Exception as e:
+            print(f"Error obteniendo detalles del artista {artist_id}: {e}")
+            return None
+
+    def get_artist_top_tracks(self, artist_id, limit=10):
+            """Obtiene las canciones más populares de un artista."""
+            if not self.sp:
+                return []
+            
+            try:
+                top_tracks_data = self.sp.artist_top_tracks(artist_id, country='US')
+                
+                tracks = []
+                for track in top_tracks_data['tracks'][:limit]:
+                    
+                    # --- INICIO DE LA CORRECCIÓN ---
+                    # Convertimos milisegundos a M:SS aquí en Python
+                    duration_ms = track['duration_ms']
+                    total_seconds = int(duration_ms / 1000)
+                    minutes = total_seconds // 60
+                    seconds = total_seconds % 60
+                    formatted_duration = f"{minutes}:{seconds:02d}"
+                    # --- FIN DE LA CORRECCIÓN ---
+                    
+                    tracks.append({
+                        'id': track['id'],
+                        'name': track['name'],
+                        'uri': track['uri'],
+                        'image': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                        'duration_ms': duration_ms, # Mantenemos el original por si acaso
+                        'duration_formatted': formatted_duration # Añadimos el nuevo campo formateado
+                    })
+                return tracks
+            except Exception as e:
+                print(f"Error obteniendo top tracks del artista {artist_id}: {e}")
+                return []
+
+    def get_artist_albums(self, artist_id, limit=20):
+        """Obtiene los álbumes y sencillos de un artista."""
+        if not self.sp:
+            return []
+        
+        try:
+            albums_data = self.sp.artist_albums(artist_id, album_type='album,single', limit=limit)
+            
+            albums = []
+            # Usamos un set para no mostrar álbumes con el mismo nombre (ej. versiones deluxe)
+            seen_names = set() 
+            for album in albums_data['items']:
+                if album['name'].lower() not in seen_names:
+                    albums.append({
+                        'id': album['id'],
+                        'name': album['name'],
+                        'image': album['images'][0]['url'] if album['images'] else None,
+                        'release_year': album['release_date'][:4], # Extraemos solo el año
+                        'type': album['album_type']
+                    })
+                    seen_names.add(album['name'].lower())
+            return albums
+        except Exception as e:
+            print(f"Error obteniendo álbumes del artista {artist_id}: {e}")
+            return []
+    
+    def get_album_details(self, album_id):
+        """
+        Obtiene los detalles de un álbum y su lista completa de canciones.
+        """
+        if not self.sp:
+            return None
+        
+        try:
+            album_data = self.sp.album(album_id)
+
+            # 1. Formatear la información principal del álbum
+            album_info = {
+                'id': album_data['id'],
+                'name': album_data['name'],
+                'artist_name': ', '.join([artist['name'] for artist in album_data['artists']]),
+                'image': album_data['images'][0]['url'] if album_data['images'] else None,
+                'release_year': album_data['release_date'][:4],
+                'total_tracks': album_data['total_tracks'],
+                'type': album_data['album_type']
+            }
+            
+            # 2. Formatear la lista de canciones del álbum
+            tracks = []
+            for track in album_data['tracks']['items']:
+                duration_ms = track['duration_ms']
+                total_seconds = int(duration_ms / 1000)
+                minutes = total_seconds // 60
+                seconds = total_seconds % 60
+                formatted_duration = f"{minutes}:{seconds:02d}"
+
+                tracks.append({
+                    'id': track['id'],
+                    'name': track['name'],
+                    'uri': track['uri'],
+                    'track_number': track['track_number'],
+                    'duration_formatted': formatted_duration
+                })
+
+            return {'album_info': album_info, 'tracks': tracks}
+
+        except Exception as e:
+            print(f"Error obteniendo detalles del álbum {album_id}: {e}")
+            return None
+        
+    def search_spotify(self, query, limit=5):
+        """
+        Busca en Spotify por canciones, artistas, álbumes y playlists.
+        """
+        if not self.sp or not query:
+            return {}
+        
+        try:
+            results = self.sp.search(q=query, type='track,artist,album,playlist', limit=limit)
+            
+            # Formatear Canciones
+            tracks = [{
+                'id': t['id'], 'name': t['name'], 'uri': t['uri'],
+                'artist': ', '.join([a['name'] for a in t['artists']]),
+                'image': t['album']['images'][0]['url'] if t['album']['images'] else None,
+                'duration_formatted': f"{int(t['duration_ms']/60000)}:{(int(t['duration_ms']/1000)%60):02d}"
+            } for t in results['tracks']['items']]
+
+            # Formatear Artistas
+            artists = [{
+                'id': a['id'], 'name': a['name'], 'uri': a['uri'],
+                'image': a['images'][0]['url'] if a['images'] else None
+            } for a in results['artists']['items']]
+
+            # Formatear Álbumes
+            albums = [{
+                'id': a['id'], 'name': a['name'],
+                'image': a['images'][0]['url'] if a['images'] else None,
+                'release_year': a['release_date'][:4]
+            } for a in results['albums']['items']]
+
+            return {
+                'tracks': tracks,
+                'artists': artists,
+                'albums': albums,
+            }
+        except Exception as e:
+            print(f"Error en la búsqueda de Spotify: {e}")
+            return {}

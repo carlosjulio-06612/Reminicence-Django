@@ -1,0 +1,82 @@
+{% load static %}
+{% include 'core/partials/_top_bar.html' %}
+
+<div class="artist-view">
+    {% if artist %}
+    <header class="artist-header" style="background-image: linear-gradient(rgba(0,0,0,0.6), #121212), url('{{ artist.image }}');">
+        <div class="artist-header-info">
+            <h1 class="artist-title">{{ artist.name }}</h1>
+            <p class="artist-meta">{{ artist.followers }} seguidores</p>
+        </div>
+    </header>
+    
+    <section class="content-section">
+        <h2>Populares</h2>
+        {% if top_tracks %}
+        <table class="song-table" data-artist-top-tracks="true">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th style="text-align: right;"><i class="far fa-clock"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in top_tracks %}
+                <tr class="song-item song-row" data-spotify-uri="{{ track.uri }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <div class="song-title-cell">
+                            <img src="{{ track.image|default:'https://via.placeholder.com/40' }}" alt="{{ track.name }}">
+                            <div>
+                                <div class="song-name">{{ track.name }}</div>
+                                <div class="song-artist">{{ track.album_name }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">{{ track.duration_formatted }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #b3b3b3;">No se encontraron canciones populares.</p>
+        {% endif %}
+    </section>
+
+    <section class="content-section">
+        <h2>Álbumes</h2>
+        {% if albums %}
+        <div class="card-container">
+            {% for album in albums %}
+            <div class="card" 
+                hx-get="{% url 'music:album_detail' album.id %}"
+                hx-target="#main-content"
+                hx-push-url="true"
+                style="cursor: pointer;">
+
+                <img src="{{ album.image|default:'https://via.placeholder.com/150' }}" alt="{{ album.name }}">
+
+                <div class="card-play-button song-item" 
+                    data-spotify-uri="spotify:album:{{ album.id }}" 
+                    onclick="event.stopPropagation();">
+                    <i class="fas fa-play"></i>
+                </div>
+
+                <h3>{{ album.name }}</h3>
+                <p>{{ album.release_year }} • {{ album.type|title }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #b3b3b3;">No se encontraron álbumes.</p>
+        {% endif %}
+    </section>
+    
+    {% else %}
+    <div style="padding: 2rem;">
+        <h2>Artista no encontrado</h2>
+        <p style="color: #b3b3b3;">No se pudieron cargar los datos para este artista.</p>
+    </div>
+    {% endif %}
+</div>

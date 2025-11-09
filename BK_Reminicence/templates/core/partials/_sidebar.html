@@ -10,7 +10,6 @@
                    <i class="fas fa-home"></i> <span>Inicio</span>
                 </a>
             </li>
-            <li><a href="#"><i class="fas fa-search"></i> <span>Buscar</span></a></li>
         </ul>
     </nav>
 
@@ -21,15 +20,8 @@
         </div>
         <div class="library-filters">
             <span class="chip">Playlists</span>
-            <span class="chip">Artistas</span>
-            <span class="chip">Álbumes</span>
         </div>
         <div class="library-content">
-            <div class="library-search">
-                <i class="fas fa-search"></i>
-                <span>Recientes</span>
-                <i class="fas fa-list"></i>
-            </div>
             <ul class="playlist-list">
                 {% if spotify_connected %}
                     {% for playlist in user_playlists %}

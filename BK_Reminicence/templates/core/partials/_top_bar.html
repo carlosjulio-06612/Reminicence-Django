@@ -1,18 +1,27 @@
-<!-- core/templates/core/partials/_top_bar.html -->
+<!-- core/templates/core/partials/_top_bar.html (ACTUALIZADO) -->
 
 <header class="top-bar">
     <div class="nav-arrows">
-        <button class="icon-button" disabled>
+        <!-- BOTÓN ATRÁS: Añadimos onclick y quitamos 'disabled' -->
+        <button class="icon-button" onclick="history.back()">
             <i class="fas fa-chevron-left"></i>
         </button>
-        <button class="icon-button">
+        
+        <!-- BOTÓN ADELANTE: Añadimos onclick -->
+        <button class="icon-button" onclick="history.forward()">
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
     
     <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="¿Qué quieres reproducir?">
+        <input type="text"
+            name="q"
+            placeholder="¿Qué quieres reproducir?"
+            hx-get="{% url 'music:search' %}"
+            hx-trigger="keyup changed delay:500ms"
+            hx-target="#main-content"
+            hx-push-url="true">
     </div>
     
     <div class="user-profile">

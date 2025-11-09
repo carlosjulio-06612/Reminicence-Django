@@ -1,0 +1,92 @@
+{% load static %}
+{% include 'core/partials/_top_bar.html' %}
+
+<div class="search-view content-wrapper"> {# Añadimos content-wrapper para el padding #}
+    {% if not query %}
+        <div class="search-prompt">
+            <h2>Busca en toda la biblioteca</h2>
+            <p>Encuentra tus canciones, artistas, álbumes y playlists favoritas.</p>
+        </div>
+    {% elif not results.tracks and not results.artists and not results.albums %}
+        <div class="search-prompt">
+            <h2>No se encontraron resultados para "{{ query }}"</h2>
+            <p>Prueba buscando con otros términos.</p>
+        </div>
+    {% else %}
+        
+        <!-- --- INICIO DE LA CORRECCIÓN --- -->
+
+        <!-- Mejor Resultado -->
+        {% if results.artists %}
+        <section class="content-section">
+            <h2>Mejor resultado</h2>
+            <!-- Usamos card-container aunque solo haya una tarjeta para mantener el espaciado y estructura -->
+            <div class="card-container">
+                <!-- Aplicamos la clase 'card' y las clases de HTMX -->
+                <div class="card" 
+                     hx-get="{% url 'music:artist_detail' results.artists.0.id %}"
+                     hx-target="#main-content" hx-push-url="true">
+                    
+                    <!-- Aplicamos la clase 'artist-image' para la foto redonda -->
+                    <img src="{{ results.artists.0.image }}" alt="{{ results.artists.0.name }}" class="artist-image">
+                    
+                    <h3>{{ results.artists.0.name }}</h3>
+                    <p>Artista</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Canciones -->
+        {% if results.tracks %}
+        <section class="content-section">
+            <h2>Canciones</h2>
+            <div class="card-container">
+                {% for track in results.tracks %}
+                    <div class="card song-item" data-spotify-uri="{{ track.uri }}">
+                        <img src="{{ track.image|default:'https://via.placeholder/150' }}" alt="{{ track.name }}">
+                        <div class="card-play-button"><i class="fas fa-play"></i></div>
+                        <h3>{{ track.name }}</h3>
+                        <p>{{ track.artist }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        <!-- Artistas -->
+        {% if results.artists %}
+        <section class="content-section">
+            <h2>Artistas</h2>
+            <div class="card-container">
+                {% for artist in results.artists %}
+                <div class="card" hx-get="{% url 'music:artist_detail' artist.id %}" hx-target="#main-content" hx-push-url="true">
+                    <img src="{{ artist.image|default:'https://via.placeholder.com/150' }}" alt="{{ artist.name }}" class="artist-image">
+                    <div class="card-play-button" data-spotify-uri="{{ artist.uri }}" onclick="event.stopPropagation();"><i class="fas fa-play"></i></div>
+                    <h3>{{ artist.name }}</h3>
+                    <p>Artista</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        <!-- Álbumes -->
+        {% if results.albums %}
+        <section class="content-section">
+            <h2>Álbumes</h2>
+            <div class="card-container">
+                {% for album in results.albums %}
+                <div class="card" hx-get="{% url 'music:album_detail' album.id %}" hx-target="#main-content" hx-push-url="true">
+                    <img src="{{ album.image|default:'https://via.placeholder.com/150' }}" alt="{{ album.name }}">
+                    <div class="card-play-button" data-spotify-uri="spotify:album:{{ album.id }}" onclick="event.stopPropagation();"><i class="fas fa-play"></i></div>
+                    <h3>{{ album.name }}</h3>
+                    <p>{{ album.release_year }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    {% endif %}
+</div>

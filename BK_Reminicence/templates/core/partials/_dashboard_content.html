@@ -154,9 +154,22 @@
         <h2>Tus artistas favoritos</h2>
         <div class="card-container">
             {% for artist in top_artists %}
-            <div class="card song-item" data-spotify-uri="{{ artist.uri }}">
+            <!-- El div principal ahora navega con HTMX -->
+            <div class="card" 
+                hx-get="{% url 'music:artist_detail' artist.id %}" 
+                hx-target="#main-content" 
+                hx-push-url="true"
+                style="cursor: pointer;">
+
                 <img src="{{ artist.image|default:'https://via.placeholder.com/150' }}" alt="{{ artist.name }}" style="border-radius: 50%;">
-                <div class="card-play-button"><i class="fas fa-play"></i></div>
+                
+                <!-- El botón de play ahora es un elemento separado y funcional -->
+                <div class="card-play-button song-item" 
+                    data-spotify-uri="{{ artist.uri }}" 
+                    onclick="event.stopPropagation();">
+                    <i class="fas fa-play"></i>
+                </div>
+
                 <h3>{{ artist.name }}</h3>
                 <p>Artista</p>
             </div>

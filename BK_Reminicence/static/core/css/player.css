@@ -459,3 +459,22 @@
     min-width: 40px;
     font-weight: 500;
 }
+/* Añade estas reglas al final de tu archivo player.css */
+
+.player-controls .player-btn.active {
+    color: #1db954; /* Verde Spotify */
+}
+
+/* Opcional: para el punto de 'repetir canción' */
+.player-controls .player-btn.active::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #1db954;
+    position: absolute;
+    bottom: 4px; /* Ajusta la posición del punto */
+    left: 50%;
+    transform: translateX(-50%);
+}
