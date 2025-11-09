@@ -1,8 +1,5 @@
 from django.db import models
-from django.db import models
 from django.conf import settings
-
-# Create your models here.
 
 class SpotifyUserToken(models.Model):
     token_id = models.AutoField(primary_key=True)
@@ -11,7 +8,7 @@ class SpotifyUserToken(models.Model):
     refresh_token = models.TextField(blank=True, null=True)
     expires_at = models.DateTimeField()
     scope = models.TextField(blank=True, null=True)
-    spotify_user_id = models.CharField(max_length=100, blank=True, null=True)
+    spotify_user_id = models.CharField(max_length=100, blank=True, null=True, unique=True)  # 👈 AGREGADO unique=True
     
     class Meta:
         managed = False

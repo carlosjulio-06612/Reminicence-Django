@@ -1,5 +1,6 @@
 # applications/spotify_api/views.py
 
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth import login
@@ -48,6 +49,7 @@ def spotify_callback_view(request):
     error = request.GET.get('error')
 
     if error:
+        messages.error(request, 'Se canceló la autorización de Spotify.')
         return redirect('users:login')
 
     response = requests.post('https://accounts.spotify.com/api/token', data={
@@ -59,6 +61,7 @@ def spotify_callback_view(request):
     })
     
     if response.status_code != 200:
+        messages.error(request, 'Error al obtener tokens de Spotify.')
         return redirect('users:login')
     
     token_data = response.json()
@@ -70,17 +73,46 @@ def spotify_callback_view(request):
     spotify_profile = get_spotify_user_profile(access_token)
     
     if not spotify_profile:
+        messages.error(request, 'No se pudo obtener tu perfil de Spotify.')
         return redirect('users:login')
     
     spotify_user_id = spotify_profile['id']
     auth_type = request.session.get('spotify_auth_type', 'link')
     
+    existing_token = SpotifyUserToken.objects.filter(spotify_user_id=spotify_user_id).first()
+    
     if auth_type == 'social_login':
-        user, created = find_or_create_user_from_spotify(spotify_profile)
-        save_spotify_tokens(user, access_token, refresh_token, expires_in, scope, spotify_user_id)
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        # Login social: crear o encontrar usuario
+        if existing_token:
+            # Ya existe vinculación, hacer login con ese usuario
+            user = existing_token.user
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            messages.success(request, f'¡Bienvenido de vuelta, {user.username}!')
+        else:
+            # No existe, crear nuevo usuario
+            user, created = find_or_create_user_from_spotify(spotify_profile)
+            save_spotify_tokens(user, access_token, refresh_token, expires_in, scope, spotify_user_id)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            if created:
+                messages.success(request, '¡Cuenta creada exitosamente con Spotify!')
+            else:
+                messages.success(request, 'Cuenta vinculada exitosamente con Spotify!')
     else:
+        # Link manual: vincular a usuario ya autenticado
+        if existing_token and existing_token.user != request.user:
+            # La cuenta de Spotify ya está vinculada a OTRO usuario
+            messages.error(
+                request, 
+                f'Esta cuenta de Spotify ya está vinculada al usuario "{existing_token.user.username}". '
+                f'Primero desvincúlala desde ese usuario para poder vincularla aquí.',
+                extra_tags='settings_page'
+            )
+            return redirect('users:settings')
+        
+        # Todo bien, vincular
         save_spotify_tokens(request.user, access_token, refresh_token, expires_in, scope, spotify_user_id)
+        messages.success(request, 'Tu cuenta de Spotify ha sido vinculada exitosamente.', extra_tags='settings_page')
     
     request.session.pop('spotify_auth_type', None)
     return redirect('core:index')

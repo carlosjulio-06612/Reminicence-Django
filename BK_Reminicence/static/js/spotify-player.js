@@ -120,8 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Event Listener Delegado ÚNICO para Iniciar Reproducción ---
+   // Event Listener Delegado ÚNICO para Iniciar Reproducción
     document.body.addEventListener('click', async (event) => {
+        // NUEVO: Ignorar clicks en enlaces
+        if (event.target.closest('a')) {
+            return; // Deja que el enlace funcione normalmente
+        }
+        
         // Busca cualquier elemento que tenga el atributo data-spotify-uri
         const clickableElement = event.target.closest('[data-spotify-uri]');
         
@@ -147,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
     // --- Iniciar ---
     fetchCurrentPlayback();
     playbackInterval = setInterval(fetchCurrentPlayback, 5000); // Cada 5 segundos

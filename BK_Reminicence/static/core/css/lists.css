@@ -1,0 +1,106 @@
+/* core/static/core/css/lists.css (NUEVO) */
+
+/* Contenedor principal de la vista de detalle */
+.playlist-view {
+    padding: 1.5rem;
+}
+
+/* Encabezado de la playlist (imagen + info) */
+.playlist-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.playlist-header img {
+    width: 200px;
+    height: 200px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    border-radius: 8px;
+}
+
+.playlist-header .playlist-type {
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.playlist-header .playlist-title {
+    font-size: 4rem;
+    margin: 0.5rem 0;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.playlist-header .playlist-description {
+    color: #b3b3b3;
+    margin-top: 1rem;
+}
+
+.playlist-header .playlist-meta {
+    color: #b3b3b3;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Tabla de canciones */
+.song-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.song-table th {
+    text-align: left;
+    padding: 0.75rem;
+    color: #b3b3b3;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.song-table th:first-child {
+    width: 4%;
+    text-align: right;
+    font-size: 1rem;
+}
+
+/* Fila de cada canción */
+.song-table .song-row {
+    cursor: pointer;
+    border-radius: 4px; /* El radio no se verá hasta que haya un fondo */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.song-table .song-row:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.song-table .song-row td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    color: #b3b3b3;
+}
+
+.song-table .song-row td:first-child {
+    text-align: right;
+}
+
+/* Celda que contiene Título y Artista */
+.song-table .song-title-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.song-table .song-title-cell img {
+    width: 40px;
+    height: 40px;
+}
+
+.song-table .song-title-cell .song-name {
+    color: #fff;
+}
+
+.song-table .song-title-cell .song-artist {
+    font-size: 0.9rem;
+}

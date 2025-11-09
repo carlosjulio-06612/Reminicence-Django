@@ -1,0 +1,50 @@
+{% load static %}
+{% include 'core/partials/_top_bar.html' %}
+
+<div class="playlist-view">
+    
+    <header class="playlist-header">
+        <img src="{{ playlist.cover_image_url|default:'https://via.placeholder.com/150' }}" alt="{{ playlist.name }}">
+        <div>
+            <h2 class="playlist-type">Playlist</h2>
+            <h1 class="playlist-title">{{ playlist.name }}</h1>
+            {% if playlist.description %}
+                <p class="playlist-description">{{ playlist.description|safe }}</p>
+            {% endif %}
+            <p class="playlist-meta">
+                <strong>{{ playlist.user.username }}</strong> • {{ songs.count }} canciones
+            </p>
+        </div>
+    </header>
+
+    <table class="song-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Álbum</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+            <tr class="song-item song-row" data-spotify-uri="{{ song.spotify_uri }}">
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <div class="song-title-cell">
+                        <img src="{{ song.album.cover_image_url|default:'https://via.placeholder.com/40' }}" alt="{{ song.album.title }}">
+                        <div>
+                            <div class="song-name">{{ song.title }}</div>
+                            <div class="song-artist">{{ song.album.artist.name }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ song.album.title }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="padding: 2rem; text-align: center;">No hay canciones en esta playlist.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
