@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/player.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/lists.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/queue-modal.css' %}">  <!-- NUEVO -->
     
     <link rel="icon" type="image/png" href="{% static 'img/icon.png' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,6 +35,46 @@
         {% include 'core/partials/_player_bar.html' %}
 
     </div>
+
+    <!-- Modal de Cola de Reproducción -->
+    <div id="queue-modal" class="queue-modal hidden">
+        <div class="queue-modal-overlay"></div>
+        <div class="queue-modal-content">
+            <div class="queue-modal-header">
+                <h2>Cola de reproducción</h2>
+                <button class="queue-close-btn" onclick="closeQueueModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="queue-modal-body">
+                <!-- Reproduciendo ahora -->
+                <div class="now-playing-section">
+                    <h3>Reproduciendo ahora</h3>
+                    <div id="queue-now-playing" class="queue-track-item current">
+                        <img src="https://via.placeholder.com/48" alt="Album art">
+                        <div class="queue-track-info">
+                            <span class="queue-track-name">Selecciona una canción</span>
+                            <span class="queue-track-artist">...</span>
+                        </div>
+                        <span class="queue-track-duration">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Próximas en cola -->
+                <div class="queue-section">
+                    <h3>Siguiente</h3>
+                    <div id="queue-next-tracks" class="queue-list">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Spotify al final del body -->
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="{% static 'js/spotify-player.js' %}"></script>
 
 </body>
 </html>

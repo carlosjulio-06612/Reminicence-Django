@@ -1,13 +1,26 @@
 /* ============================================
-   PLAYER BAR - Reproductor inferior
-   Paleta: Morado/Azul moderna
+   PALETA Y VARIABLES
    ============================================ */
+:root {
+    --primary-purple: #6a11cb;
+    --secondary-blue: #2575fc;
+    --accent-gradient: linear-gradient(90deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8d1;
+    --bg-primary-dark: rgba(15, 15, 30, 0.98);
+    --bg-primary-light: rgba(26, 26, 46, 0.95);
+    --bg-interactive-hover: rgba(106, 17, 203, 0.1);
+    --border-color: rgba(106, 17, 203, 0.2);
+}
 
+/* ============================================
+   PLAYER BAR - REPRODUCTOR INFERIOR
+   ============================================ */
 .player-bar {
-    background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 15, 30, 0.98) 100%);
+    background: linear-gradient(180deg, var(--bg-primary-light) 0%, var(--bg-primary-dark) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(106, 17, 203, 0.2);
+    border-top: 1px solid var(--border-color);
     padding: 0.875rem 1.25rem;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
@@ -24,11 +37,11 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, var(--primary-purple) 50%, var(--secondary-blue) 100%);
+    background: var(--accent-gradient);
     opacity: 0.6;
 }
 
-/* Información de canción actual */
+/* SECCIÓN 1: INFORMACIÓN DE LA CANCIÓN */
 .now-playing {
     display: flex;
     align-items: center;
@@ -56,7 +69,7 @@
 }
 
 .track-name {
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 0.95rem;
     font-weight: 600;
     overflow: hidden;
@@ -68,13 +81,13 @@
 
 .track-name:hover {
     background: var(--accent-gradient);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .artist-name {
-    color: #b8b8d1;
+    color: var(--text-secondary);
     font-size: 0.8rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -87,26 +100,7 @@
     color: var(--secondary-blue);
 }
 
-.now-playing i {
-    color: #b8b8d1;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 8px;
-    border-radius: 50%;
-}
-
-.now-playing i:hover {
-    color: var(--primary-purple);
-    background: rgba(106, 17, 203, 0.1);
-    transform: scale(1.1);
-}
-
-.now-playing i.active {
-    color: var(--primary-purple);
-}
-
-/* Controles del reproductor */
+/* SECCIÓN 2: CONTROLES DEL REPRODUCTOR */
 .player-controls {
     display: flex;
     flex-direction: column;
@@ -120,12 +114,11 @@
     gap: 1.25rem;
 }
 
-/* Botones de iconos base */
-.icon-button,
-.player-btn {
+/* Estilos base de botones */
+.icon-button, .player-btn {
     background: none;
     border: none;
-    color: #b8b8d1;
+    color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.2s;
     padding: 8px;
@@ -134,6 +127,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1rem;
+    position: relative;
 }
 
 .icon-button.small {
@@ -141,27 +135,45 @@
     padding: 6px;
 }
 
-.icon-button:hover,
-.player-btn:hover {
-    color: #ffffff;
-    background: rgba(106, 17, 203, 0.1);
+.icon-button:hover, .player-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-interactive-hover);
     transform: scale(1.1);
 }
 
-.icon-button:active,
-.player-btn:active {
+.icon-button:active, .player-btn:active {
     transform: scale(0.95);
 }
 
-.icon-button.active,
+/* Estado activo para botones (shuffle, repeat) */
 .player-btn.active {
     color: var(--primary-purple);
 }
 
+.player-btn.active:hover {
+    color: var(--secondary-blue);
+}
+
+/* Indicador de punto para botones activos (opcional) */
+.player-btn.active[data-state="context"]::after,
+.player-btn.active[data-state="track"]::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--primary-purple);
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* BOTÓN DE PLAY AJUSTADO */
 .play-button {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
+    width: 36px; /* Reducido de 36px */
+    height: 36px; /* Reducido de 36px */
+    background: var(--accent-gradient);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -183,9 +195,9 @@
 }
 
 .play-button i {
-    color: #ffffff;
-    font-size: 1.1rem;
-    margin-left: 2px;
+    color: var(--text-primary);
+    font-size: 1rem; /* Reducido de 1.1rem */
+    margin-left: 2px; /* Ajuste para centrar el icono de play */
 }
 
 /* Barra de progreso */
@@ -197,37 +209,37 @@
     max-width: 650px;
 }
 
-.progress-bar-container span {
-    color: #b8b8d1;
+.time-current, .time-total {
+    color: var(--text-secondary);
     font-size: 0.75rem;
     min-width: 40px;
     font-weight: 500;
 }
 
-.progress-bar {
+.progress-bar, .volume-bar {
     flex: 1;
     height: 4px;
     background: linear-gradient(90deg, rgba(106, 17, 203, 0.2) 0%, rgba(37, 117, 252, 0.2) 100%);
     border-radius: 4px;
     position: relative;
     cursor: pointer;
-    transition: height 0.2s;
+    transition: height 0.2s ease;
 }
 
-.progress-bar:hover {
+.progress-bar:hover, .volume-bar:hover {
     height: 6px;
 }
 
-.progress {
+.progress-bar .progress, .volume-bar .progress {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
+    background: var(--accent-gradient);
     border-radius: 4px;
     transition: width 0.1s linear;
     position: relative;
     box-shadow: 0 0 12px rgba(106, 17, 203, 0.4);
 }
 
-.progress::after {
+.progress-bar .progress::after, .volume-bar .progress::after {
     content: '';
     position: absolute;
     right: 0;
@@ -235,18 +247,18 @@
     transform: translateY(-50%);
     width: 12px;
     height: 12px;
-    background: #ffffff;
+    background: var(--text-primary);
     border-radius: 50%;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease;
     box-shadow: 0 2px 8px rgba(106, 17, 203, 0.6);
 }
 
-.progress-bar:hover .progress::after {
+.progress-bar:hover .progress::after, .volume-bar:hover .progress::after {
     opacity: 1;
 }
 
-/* Controles de dispositivo y volumen */
+/* SECCIÓN 3: CONTROLES DE DISPOSITIVO Y VOLUMEN */
 .device-controls {
     display: flex;
     align-items: center;
@@ -254,111 +266,232 @@
     gap: 0.5rem;
 }
 
-.device-controls .icon-button,
-.device-controls button {
-    color: #b8b8d1;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 8px;
-    border-radius: 50%;
-    background: none;
-    border: none;
+.volume-bar {
+    width: 80px;
+}
+
+
+/* ============================================
+   MODAL DE COLA DE REPRODUCCIÓN
+   ============================================ */
+.queue-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.device-controls .icon-button:hover,
-.device-controls button:hover {
-    color: var(--primary-purple);
-    background: rgba(106, 17, 203, 0.1);
-    transform: scale(1.1);
+.queue-modal.hidden {
+    display: none;
 }
 
-.volume-bar {
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(90deg, rgba(106, 17, 203, 0.2) 0%, rgba(37, 117, 252, 0.2) 100%);
-    border-radius: 4px;
-    position: relative;
+.queue-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
     cursor: pointer;
-    transition: height 0.2s;
 }
 
-.volume-bar:hover {
-    height: 6px;
+.queue-modal-content {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.3s ease-out;
 }
 
-.volume-bar .progress {
-    background: linear-gradient(90deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
-    box-shadow: 0 0 12px rgba(106, 17, 203, 0.4);
+.queue-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.volume-bar .progress::after {
+.queue-modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.queue-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.queue-close-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.queue-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.now-playing-section, .queue-section {
+    margin-bottom: 2rem;
+}
+
+.now-playing-section h3, .queue-section h3 {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 1rem 0;
+}
+
+.queue-track-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.queue-track-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.queue-track-item.current {
+    background: rgba(106, 17, 203, 0.15);
+    border: 1px solid rgba(106, 17, 203, 0.4);
+    cursor: default;
+}
+
+.queue-track-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.queue-track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.queue-track-name {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+}
+
+.queue-track-item.current .queue-track-name {
+    color: var(--primary-purple);
+}
+
+.queue-track-artist {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.queue-track-duration {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Scrollbar personalizado para el modal */
+.queue-modal-body::-webkit-scrollbar { width: 8px; }
+.queue-modal-body::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
+.queue-modal-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+.queue-modal-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInTrack {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.queue-list .queue-track-item {
+    animation: fadeInTrack 0.3s ease-out;
+}
+
+/* Animación de carga para el modal */
+.queue-modal-content.loading::after {
     content: '';
     position: absolute;
-    right: 0;
     top: 50%;
-    transform: translateY(-50%);
-    width: 12px;
-    height: 12px;
-    background: #ffffff;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--primary-purple);
     border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.2s;
-    box-shadow: 0 2px 8px rgba(106, 17, 203, 0.6);
+    animation: spin 0.8s linear infinite;
 }
 
-.volume-bar:hover .progress::after {
-    opacity: 1;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-/* Estados especiales */
-.player-bar.playing .play-button {
-    animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
-    0%, 100% {
-        box-shadow: 0 4px 16px rgba(106, 17, 203, 0.4);
-    }
-    50% {
-        box-shadow: 0 6px 24px rgba(106, 17, 203, 0.7);
-    }
-}
-
-/* Animación de carga para la barra de progreso */
-.progress-bar.loading .progress {
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% {
-        opacity: 0.6;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0.6;
-    }
-}
-
-/* Responsive */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 @media (max-width: 1024px) {
     .player-bar {
         grid-template-columns: 1fr 1.5fr 1fr;
         padding: 0.75rem 1rem;
         gap: 1rem;
     }
-
-    .volume-bar {
-        width: 80px;
-    }
-
-    .control-buttons {
-        gap: 1rem;
-    }
+    .volume-bar { width: 80px; }
+    .control-buttons { gap: 1rem; }
 }
 
 @media (max-width: 768px) {
@@ -366,115 +499,52 @@
         grid-template-columns: 1fr 2fr;
         padding: 0.75rem 0.875rem;
     }
-
-    .device-controls {
-        display: none;
-    }
-
-    .progress-bar-container {
-        max-width: 100%;
-    }
-
-    .now-playing img {
-        width: 54px;
-        height: 54px;
-    }
+    .device-controls { display: none; }
+    .progress-bar-container { max-width: 100%; }
+    .now-playing img { width: 54px; height: 54px; }
+    
+    .queue-modal-content { width: 95%; max-height: 90vh; }
+    .queue-modal-header { padding: 1rem; }
+    .queue-modal-header h2 { font-size: 1.25rem; }
+    .queue-modal-body { padding: 1rem; }
 }
 
 @media (max-width: 480px) {
-    .player-bar {
-        padding: 0.625rem 0.75rem;
-        gap: 0.75rem;
-    }
-
-    .now-playing {
-        gap: 0.75rem;
-    }
-
-    .now-playing img {
-        width: 48px;
-        height: 48px;
-    }
-
-    .control-buttons {
-        gap: 0.75rem;
-    }
-
+    .player-bar { padding: 0.625rem 0.75rem; gap: 0.75rem; }
+    .now-playing { gap: 0.75rem; }
+    .now-playing img { width: 48px; height: 48px; }
+    .control-buttons { gap: 0.75rem; }
+    /* BOTÓN DE PLAY AJUSTADO PARA MÓVIL */
     .play-button {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
     }
-
     .play-button i {
-        font-size: 1rem;
-    }
-
-    .player-btn {
         font-size: 0.9rem;
-        padding: 6px;
     }
-
-    .progress-bar-container {
-        gap: 0.5rem;
-    }
-
-    .progress-bar-container span {
-        display: none;
-    }
-
-    .track-name {
-        font-size: 0.85rem;
-    }
-
-    .artist-name {
-        font-size: 0.75rem;
-    }
+    .player-btn { font-size: 0.9rem; padding: 6px; }
+    .progress-bar-container { gap: 0.5rem; }
+    .time-current, .time-total { display: none; }
+    .track-name { font-size: 0.85rem; }
+    .artist-name { font-size: 0.75rem; }
+    
+    .queue-track-item img { width: 40px; height: 40px; }
+    .queue-track-name { font-size: 0.875rem; }
+    .queue-track-artist, .queue-track-duration { font-size: 0.8rem; }
 }
 
-/* Accesibilidad */
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
 @media (prefers-reduced-motion: reduce) {
-    .play-button,
-    .player-btn,
-    .progress,
-    .now-playing img {
+    .play-button, .player-btn, .progress, .now-playing img, .queue-modal-content, .queue-list .queue-track-item {
         transition: none;
         animation: none;
     }
 }
 
-.player-btn:focus-visible,
-.play-button:focus-visible,
-.progress-bar:focus-visible,
-.volume-bar:focus-visible {
+.player-btn:focus-visible, .play-button:focus-visible, .progress-bar:focus-visible, .volume-bar:focus-visible, .queue-close-btn:focus-visible {
     outline: 2px solid var(--primary-purple);
     outline-offset: 2px;
     border-radius: 4px;
-}
-
-/* Clases para tiempos del reproductor */
-.time-current,
-.time-total {
-    color: #b8b8d1;
-    font-size: 0.75rem;
-    min-width: 40px;
-    font-weight: 500;
-}
-/* Añade estas reglas al final de tu archivo player.css */
-
-.player-controls .player-btn.active {
-    color: #1db954; /* Verde Spotify */
-}
-
-/* Opcional: para el punto de 'repetir canción' */
-.player-controls .player-btn.active::after {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: #1db954;
-    position: absolute;
-    bottom: 4px; /* Ajusta la posición del punto */
-    left: 50%;
-    transform: translateX(-50%);
 }

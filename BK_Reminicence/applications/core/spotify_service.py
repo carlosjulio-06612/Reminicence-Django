@@ -54,7 +54,7 @@ class SpotifyService:
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope="user-library-read user-top-read playlist-read-private user-read-recently-played user-read-email user-read-private"
+            scope="streaming user-library-read user-top-read playlist-read-private user-read-recently-played user-read-email user-read-private"
         )
     
     def get_user_playlists(self):

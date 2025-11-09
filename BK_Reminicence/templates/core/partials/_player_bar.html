@@ -1,6 +1,6 @@
 <!-- core/templates/core/partials/_player_bar.html -->
 
-{% load static %} <!-- AÑADIR ESTA LÍNEA AL PRINCIPIO DE TODO -->
+{% load static %}
 
 {% if user.is_authenticated and user.spotifyusertoken %}
 <footer class="player-bar" id="spotify-player-bar">
@@ -19,7 +19,7 @@
     <!-- SECCIÓN CENTRAL: CONTROLES Y PROGRESO -->
     <div class="player-controls">
         <div class="control-buttons">
-            <button class="icon-button small player-btn" title="Aleatorio" id="player-shuffle-btn">
+            <button class="icon-button small player-btn" title="Aleatorio" id="player-shuffle-btn" data-state="false">
                 <i class="fas fa-random"></i>
             </button>
             <button class="icon-button small player-btn" title="Anterior" id="player-previous-btn">
@@ -31,7 +31,7 @@
             <button class="icon-button small player-btn" title="Siguiente" id="player-next-btn">
                 <i class="fas fa-step-forward"></i>
             </button>
-            <button class="icon-button small player-btn" title="Repetir" id="player-repeat-btn">
+            <button class="icon-button small player-btn" title="Repetir" id="player-repeat-btn" data-state="off">
                 <i class="fas fa-redo"></i>
             </button>
         </div>
@@ -50,13 +50,16 @@
         <button class="icon-button small" title="Letra" disabled><i class="fas fa-microphone-alt"></i></button>
         <button class="icon-button small" title="Cola de reproducción" disabled><i class="fas fa-list-ol"></i></button>
         <button class="icon-button small" title="Conectar a un dispositivo" disabled><i class="fas fa-desktop"></i></button>
-        <button class="icon-button small" title="Volumen" disabled><i class="fas fa-volume-up"></i></button>
+        <button class="icon-button small" title="Volumen"><i class="fas fa-volume-up"></i></button>
         <div class="volume-bar">
-            <div class="progress" style="width: 70%;"></div>
+            <div class="progress" style="width: 100%;"></div>
         </div>
     </div>
 </footer>
 
-<!-- El script se carga aquí, después de que exista el HTML del reproductor -->
-<script src="{% static 'js/spotify-player.js' %}"></script>
+<!-- El script ya se carga en base.html, solo pasamos el token -->
+<script>
+    // Pasamos el token de acceso de Django a una variable global de JavaScript
+    window.spotifyAccessToken = "{{ user.spotifyusertoken.access_token }}";
+</script>
 {% endif %}
