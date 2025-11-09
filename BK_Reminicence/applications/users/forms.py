@@ -8,7 +8,6 @@ class UserRegisterForm(UserCreationForm):
     Formulario de registro que hereda de UserCreationForm y añade validación para
     la existencia del email y personaliza el mensaje del username.
     """
-    # Añadimos el campo email para que sea obligatorio y se muestre en el formulario
     email = forms.EmailField(
         required=True,
         label="Correo Electrónico",
@@ -16,20 +15,19 @@ class UserRegisterForm(UserCreationForm):
     )
 
     class Meta(UserCreationForm.Meta):
-        model = User  # Le decimos que trabaje con el modelo User por defecto
-        fields = ('username', 'email') # Campos que queremos en el formulario
+        model = User 
+        fields = ('username', 'email')
 
     def clean_email(self):
         """
         Este método se ejecuta al validar el formulario.
         Comprueba si el email introducido ya existe en la base de datos.
         """
-        email = self.cleaned_data.get('email').lower() # Convertimos a minúsculas
+        email = self.cleaned_data.get('email').lower() 
         if User.objects.filter(email=email).exists():
-            # Si ya existe, lanzamos un error de validación
             raise forms.ValidationError("Ya existe una cuenta registrada con este correo electrónico.")
         
-        # Si no existe, devolvemos el email validado
+        
         return email
 
     def clean_username(self):
