@@ -1,54 +1,74 @@
-# 🎧 Reminicence – Django Spotify Integration
+# 🎵 Reminicence — API Backend (Django REST)
 
-> Comprehensive guide and implementation for connecting to the **Spotify Web API** using **Django**.  
-> Includes secure authentication, token management, and interaction with Spotify’s core endpoints.
+## Descripción
 
----
+**Reminicence** es una aplicación web musical actualmente en proceso de **migración hacia una arquitectura desacoplada**.
+En esta rama (`api-migration`), el proyecto evoluciona desde un backend monolítico con plantillas HTML hacia una **API RESTful construida con Django** para ser consumida por un **frontend en React**.
 
-## 🚀 Descripción General
-
-**Reminicence-Django** es una aplicación educativa basada en **Django** que implementa la conexión con la **Spotify Web API** utilizando el flujo de credenciales de cliente (**Client Credentials Flow**).  
-Su propósito es servir como una guía práctica para entender la integración de servicios externos en entornos web seguros.
-
-Incluye módulos para:
-- Autenticación mediante credenciales de cliente.
-- Gestión segura de tokens.
-- Interacción con endpoints de Spotify para artistas, álbumes, canciones y playlists.
-- Estructura modular escalable para extender funcionalidades.
+El objetivo de esta fase es **centralizar toda la lógica de negocio, autenticación, auditoría e integración con Spotify** en el backend, garantizando una comunicación eficiente con el cliente a través de endpoints JSON.
 
 ---
 
-## 🧩 Características Principales
+## Tabla de Contenidos
 
-- 🔐 **Autenticación segura:** manejo automatizado de tokens OAuth2.  
-- 🎵 **Integración con Spotify:** obtención de datos de canciones, álbumes y artistas.  
-- ⚙️ **Arquitectura modular:** separación de aplicaciones (`core`, `spotify_api`, `music`, etc.).  
-- 📊 **Auditoría integrada:** registro de acciones dentro del sistema.  
-- 🧠 **Enfoque educativo:** pensado para mostrar buenas prácticas de desarrollo en Django.
-
----
-
-## 🛠️ Tecnologías Utilizadas
-
-| Componente | Descripción |
-|-------------|--------------|
-| **Python 3.10+** | Lenguaje base del proyecto |
-| **Django** | Framework principal de desarrollo web |
-| **Spotify Web API** | Fuente de datos musicales y autenticación externa |
-| **PostgreSQL / SQLite** | Base de datos relacional |
-| **HTML, CSS, JS** | Frontend estático integrado en `/static` y `/templates` |
+1. [Estructura del proyecto](#estructura-del-proyecto)
+2. [Tecnologías utilizadas](#tecnologías-utilizadas)
+3. [Instalación y configuración](#instalación-y-configuración)
+4. [Uso y endpoints](#uso-y-endpoints)
+5. [Arquitectura y módulos](#arquitectura-y-módulos)
+6. [Integración con el frontend React](#integración-con-el-frontend-react)
+7. [Licencia](#licencia)
+8. [Contacto y contribuciones](#contacto-y-contribuciones)
 
 ---
 
-## ⚙️ Configuración Rápida
+## Estructura del proyecto
 
-1. **Clona el repositorio**
+```text
+Reminicence/
+│
+├── Backend/
+│   └── BK_Reminicence/
+│       ├── applications/
+│       │   ├── core/            # Configuración base, excepciones, paginación y utilidades
+│       │   ├── music/           # Endpoints REST para canciones, artistas y álbumes
+│       │   ├── spotify_api/     # Integración con Spotify mediante API propia
+│       │   ├── users/           # Gestión y autenticación de usuarios vía JWT
+│       │   └── auditing/        # Auditoría de acciones del sistema
+│       │
+│       ├── BK_Reminicence/      # Configuración global del proyecto Django
+│       ├── requirements/        # Dependencias del entorno
+│       ├── media/               # Archivos multimedia cargados por usuarios
+|        └── manage.py            # Punto de entrada principal
+
+```
+
+---
+
+## Tecnologías utilizadas
+
+* **Python 3.12+**
+* **Django 5.x**
+* **Django REST Framework (DRF)**
+* **PostgreSQL** como base de datos principal
+* **Spotipy / Spotify Web API**
+* **CORS Headers** para integración con React
+* **SimpleJWT** para autenticación basada en tokens
+* **Docker (opcional)** para despliegue y contenedorización
+
+---
+
+## Instalación y configuración
+
+1. **Clonar el repositorio y cambiar a la rama `api-migration`:**
+
    ```bash
    git clone https://github.com/carlosjulio-06612/Reminicence-Django.git
-   cd Reminicence-Django/BK_Reminicence
+   cd Reminicence/Backend
+   git checkout api-migration
    ```
 
-2. **Crea y activa el entorno virtual**
+2. **Crear y activar entorno virtual:**
 
    ```bash
    python -m venv venv
@@ -56,58 +76,96 @@ Incluye módulos para:
    venv\Scripts\activate        # Windows
    ```
 
-3. **Instala dependencias**
+3. **Instalar dependencias:**
 
    ```bash
-   pip install -r requirements/requirements.txt
+   pip install -r BK_Reminicence/requirements/local.txt
    ```
 
-4. **Ejecuta el servidor**
+4. **Configurar variables sensibles:**
+
+   Crea un archivo `secret.json` en `BK_Reminicence/BK_Reminicence/` con tus credenciales:
+
+   ```json
+   {
+     "SECRET_KEY": "tu_clave_secreta",
+     "DB_NAME": "reminicence_db",
+     "DB_USER": "postgres",
+     "DB_PASSWORD": "tu_contraseña",
+     "DB_HOST": "localhost",
+     "DB_PORT": "5432"
+   }
+   ```
+
+5. **Aplicar migraciones y ejecutar servidor:**
 
    ```bash
+   python manage.py makemigrations
+   python manage.py migrate
    python manage.py runserver
    ```
 
-   Accede a: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+   API disponible en: [http://127.0.0.1:8000/api/](http://127.0.0.1:8000/api/)
 
 ---
 
-## 🧱 Estructura Básica del Proyecto
+## Uso y endpoints
+
+Los endpoints se agrupan por aplicación:
+
+| Módulo          | Prefijo          | Descripción                                  |
+| --------------- | ---------------- | -------------------------------------------- |
+| **Users**       | `/api/users/`    | Registro, login y gestión de usuarios (JWT). |
+| **Music**       | `/api/music/`    | CRUD de canciones, artistas y álbumes.       |
+| **Spotify API** | `/api/spotify/`  | Consulta y sincronización con Spotify.       |
+| **Auditing**    | `/api/auditing/` | Registro de acciones del sistema.            |
+
+Ejemplo de endpoint activo:
 
 ```bash
-Reminicence-Django/
-│
-├── BK_Reminicence/            # Proyecto principal
-│   ├── applications/
-│   │   ├── core/
-│   │   ├── users/
-│   │   ├── music/
-│   │   ├── spotify_api/
-│   │   └── auditing/
-│   ├── static/                # Archivos estáticos (CSS, JS, imágenes)
-│   └── templates/             # Plantillas HTML
-│
-├── LICENSE                    # Licencia MIT
-└── .gitignore
+GET /api/music/albums/
 ```
 
----
-
-## 📚 Documentación
-
-Consulta la guía técnica completa y las instrucciones detalladas en el archivo [`README` dentro de BK_Reminicence](./BK_Reminicence/README.md).
+Retorna un listado en formato JSON con metadatos y paginación.
 
 ---
 
-## 🧾 Licencia
+## Arquitectura y módulos
 
-Este proyecto se distribuye bajo la licencia **MIT**.
-Consulta el archivo [`LICENSE`](./LICENSE) para más información.
+El backend sigue el patrón **RESTful modular**, con las aplicaciones divididas en:
+
+* **`core`**: configuración global, manejo de excepciones y utilidades comunes.
+* **`users`**: autenticación, tokens y control de permisos.
+* **`music`**: servicios y endpoints REST del dominio musical.
+* **`spotify_api`**: integración con API de terceros.
+* **`auditing`**: monitoreo y trazabilidad de acciones.
 
 ---
 
-## ⭐ Contribuciones
+## Integración con el frontend React
 
-Las contribuciones, ideas y mejoras son bienvenidas.
-Puedes abrir un **issue** o enviar un **pull request** para colaborar.
+El frontend (en desarrollo) consumirá los endpoints de este backend mediante **fetch/Axios**.
+Asegúrate de tener configurado CORS en `settings/base.py`:
+
+```python
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+```
+
+Esto permitirá la comunicación directa entre el cliente React y la API.
+
+---
+
+## Licencia
+
+Distribuido bajo la **Licencia MIT**. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## Contacto y contribuciones
+
+Desarrollado por **Carlos Julio Wilches**.
+Contribuciones, revisiones o sugerencias son bienvenidas mediante *pull requests* o *issues* en GitHub.
+Repositorio: [Reminicence-Django](https://github.com/carlosjulio-06612/Reminicence-Django)
 
