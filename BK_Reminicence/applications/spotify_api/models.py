@@ -8,7 +8,7 @@ class SpotifyUserToken(models.Model):
     refresh_token = models.TextField(blank=True, null=True)
     expires_at = models.DateTimeField()
     scope = models.TextField(blank=True, null=True)
-    spotify_user_id = models.CharField(max_length=100, blank=True, null=True, unique=True)  # 👈 AGREGADO unique=True
+    spotify_user_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
     
     class Meta:
         managed = False

@@ -1,5 +1,3 @@
-# applications/music/sync_service.py
-
 from django.utils import timezone
 from .models import Artists, Albums, Songs, Playlist, PlaylistSong
 from applications.core.spotify_service import SpotifyService

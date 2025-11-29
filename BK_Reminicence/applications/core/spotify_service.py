@@ -151,8 +151,6 @@ class SpotifyService:
             }
         except Exception:
             return None
-        
-    # Pega estos tres nuevos métodos dentro de la clase SpotifyService
 
     def get_artist_details(self, artist_id):
         """Obtiene los detalles principales de un solo artista."""
@@ -165,7 +163,7 @@ class SpotifyService:
                 'id': artist_data['id'],
                 'name': artist_data['name'],
                 'image': artist_data['images'][0]['url'] if artist_data['images'] else None,
-                'followers': f"{artist_data['followers']['total']:,}" # Formatea el número 1,234,567
+                'followers': f"{artist_data['followers']['total']:,}" 
             }
         except Exception as e:
             print(f"Error obteniendo detalles del artista {artist_id}: {e}")
@@ -182,14 +180,11 @@ class SpotifyService:
                 tracks = []
                 for track in top_tracks_data['tracks'][:limit]:
                     
-                    # --- INICIO DE LA CORRECCIÓN ---
-                    # Convertimos milisegundos a M:SS aquí en Python
                     duration_ms = track['duration_ms']
                     total_seconds = int(duration_ms / 1000)
                     minutes = total_seconds // 60
                     seconds = total_seconds % 60
                     formatted_duration = f"{minutes}:{seconds:02d}"
-                    # --- FIN DE LA CORRECCIÓN ---
                     
                     tracks.append({
                         'id': track['id'],
@@ -213,7 +208,6 @@ class SpotifyService:
             albums_data = self.sp.artist_albums(artist_id, album_type='album,single', limit=limit)
             
             albums = []
-            # Usamos un set para no mostrar álbumes con el mismo nombre (ej. versiones deluxe)
             seen_names = set() 
             for album in albums_data['items']:
                 if album['name'].lower() not in seen_names:
@@ -221,7 +215,7 @@ class SpotifyService:
                         'id': album['id'],
                         'name': album['name'],
                         'image': album['images'][0]['url'] if album['images'] else None,
-                        'release_year': album['release_date'][:4], # Extraemos solo el año
+                        'release_year': album['release_date'][:4],
                         'type': album['album_type']
                     })
                     seen_names.add(album['name'].lower())

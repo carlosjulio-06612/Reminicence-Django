@@ -1,8 +1,6 @@
-# applications/spotify_api/utils.py (VERSIÓN CORREGIDA Y DEFINITIVA)
-
 import requests
 import base64
-import pytz # <-- AÑADIR ESTA LÍNEA
+import pytz
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
