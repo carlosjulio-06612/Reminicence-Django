@@ -6,13 +6,23 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from applications.spotify_api.models import SpotifyUserToken
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+from rest_framework.views import APIView
 
 from .serializers import (
     UserSerializer,
     UserRegisterSerializer,
     UserUpdateSerializer,
     ChangePasswordSerializer,
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer
 )
 
 
@@ -34,6 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = []
     
     def get_permissions(self):
         """Permisos dinámicos según la acción"""
@@ -142,3 +153,73 @@ class UserViewSet(viewsets.ModelViewSet):
                 {'error': 'Tu cuenta no estaba vinculada a Spotify.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
+class PasswordResetRequestView(APIView):
+    """
+    POST: Recibe email y envía enlace de recuperación.
+    Publico (AllowAny)
+    """
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.validated_data['email']
+        user = User.objects.get(email=email)
+        
+        # Generar tokens
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        
+        # URL DEL FRONTEND (REACT)
+        # Asegúrate de que coincida con donde corre tu React
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_url}/password-reset/confirm/{uid}/{token}"
+        
+        # Preparar Email
+        subject = "Restablecer contraseña - Reminiscence"
+        
+        # Puedes usar un template HTML o texto plano
+        message = f"""
+        Hola {user.username},
+        
+        Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace:
+        
+        {reset_link}
+        
+        Si no fuiste tú, ignora este mensaje.
+        """
+        
+        # Enviar
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER, # Remitente
+                [email],
+                fail_silently=False,
+            )
+            return Response({'message': 'Se ha enviado un correo con las instrucciones.'})
+        except Exception as e:
+            return Response(
+                {'error': 'Error al enviar el correo. Intenta más tarde.'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class PasswordResetConfirmView(APIView):
+    """
+    POST: Recibe uid, token y nueva contraseña para cambiarla.
+    Publico (AllowAny)
+    """
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetConfirmSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({'message': 'Contraseña restablecida exitosamente.'})

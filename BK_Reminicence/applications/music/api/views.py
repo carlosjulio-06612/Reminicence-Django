@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
+from applications.music.sync_service import SpotifySyncService 
+from applications.core.spotify_service import SpotifyService 
 
 from ..models import (
     Artists,
@@ -332,7 +334,7 @@ class FavoriteArtistsView(APIView):
         """Listar artistas favoritos del usuario"""
         favorites = UserFavoriteArtist.objects.filter(
             user=request.user
-        ).select_related('artist').order_by('-added_at')
+        ).select_related('artist').order_by('-favorited_at')
         
         serializer = FavoriteArtistSerializer(favorites, many=True)
         return Response(serializer.data)
@@ -399,22 +401,15 @@ class FavoriteArtistsView(APIView):
 # ===================================================================
 # ===== VISTAS DE BÚSQUEDA Y SINCRONIZACIÓN =========================
 # ===================================================================
-
 class SpotifySearchView(APIView):
     """
     Vista para buscar contenido en Spotify
-    
-    Query params:
-    - q: Término de búsqueda
-    - type: Tipo de contenido (track, artist, album) - default: track
-    - limit: Cantidad de resultados (max: 50) - default: 20
     """
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
         query = request.query_params.get('q', '')
-        search_type = request.query_params.get('type', 'track')
-        limit = int(request.query_params.get('limit', 20))
+        limit = int(request.query_params.get('limit', 10))
         
         if not query:
             return Response(
@@ -423,48 +418,84 @@ class SpotifySearchView(APIView):
             )
         
         try:
+            # 1. Instanciamos el servicio (Ahora funcionará porque importamos la clase)
             spotify_service = SpotifyService(request.user)
-            results = spotify_service.search(query, search_type, limit)
             
-            serializer = SpotifySearchResultSerializer(results)
-            return Response(serializer.data)
+            # 2. Llamamos al método de búsqueda del servicio
+            # Asegúrate que en spotify_service.py el método se llame 'search_spotify' o 'search'
+            # Usamos 'search_spotify' porque así estaba en tu último archivo enviado.
+            results = spotify_service.search_spotify(query, limit=limit)
+            
+            # 3. Mapeamos la respuesta para que coincida con lo que espera el Frontend
+            # El frontend espera: { songs: { results: [...] }, artists: { results: [...] } }
+            response_data = {
+                'songs': {
+                    'results': [
+                        {
+                            'song_id': t['id'],
+                            'title': t['name'],
+                            'artist_name': t['artist'],
+                            'album_cover': t['image'],
+                            'spotify_uri': t['uri'],
+                            'duration': t.get('duration_formatted', '0:00') # Usamos el formateado del servicio
+                        } for t in results.get('tracks', [])
+                    ]
+                },
+                'artists': {
+                    'results': [
+                        {
+                            'artist_id': a['id'],
+                            'name': a['name'],
+                            'image_url': a['image'],
+                            'spotify_uri': a['uri']
+                        } for a in results.get('artists', [])
+                    ]
+                },
+                'albums': {
+                    'results': results.get('albums', [])
+                },
+                'playlists': {
+                    'results': results.get('playlists', [])
+                }
+            }
+            
+            # 4. CORRECCIÓN PRINCIPAL: Devolvemos un objeto Response, no un dict
+            return Response(response_data)
+            
         except Exception as e:
+            print(f"Error en vista de búsqueda: {e}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
 class SyncSpotifyView(APIView):
     """
-    Vista para sincronizar datos de Spotify
-    
-    POST: Sincronizar playlists, artistas y canciones guardadas
-    GET: Obtener estado de última sincronización
+    Vista para sincronizar datos de Spotify usando SpotifySyncService
     """
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        """Obtener estado de última sincronización"""
-        # Aquí podrías almacenar el estado de sync en un modelo
-        # Por ahora retornamos info básica
+        """Obtener estado (Mock por ahora)"""
         last_sync = {
             'user': request.user.username,
-            'spotify_linked': hasattr(request.user, 'spotifyusertoken'),
-            'last_sync_date': None,  # Implementar si tienes modelo de SyncHistory
+            'spotify_linked': True, # Podrías verificar el token real aquí
+            'last_sync_date': timezone.now(),
+            'is_syncing': False,
+            'playlists_synced': 0,
+            'message': "Listo para sincronizar"
         }
-        
-        serializer = SyncStatusSerializer(last_sync)
-        return Response(serializer.data)
+        return Response(last_sync)
     
     def post(self, request):
         """Iniciar sincronización con Spotify"""
-        sync_playlists = request.data.get('sync_playlists', True)
-        sync_saved_tracks = request.data.get('sync_saved_tracks', True)
-        sync_top_artists = request.data.get('sync_top_artists', True)
+        sync_playlists_opt = request.data.get('sync_playlists', True)
+        sync_saved_tracks_opt = request.data.get('sync_saved_tracks', True)
+        sync_top_artists_opt = request.data.get('sync_top_artists', True)
         
         try:
-            spotify_service = SpotifyService(request.user)
+            # Instanciamos TU servicio de sincronización
+            sync_service = SpotifySyncService(request.user)
             
             results = {
                 'playlists_synced': 0,
@@ -472,18 +503,18 @@ class SyncSpotifyView(APIView):
                 'artists_synced': 0,
             }
             
-            # Sincronizar según las opciones
-            if sync_playlists:
-                playlists = spotify_service.sync_user_playlists()
-                results['playlists_synced'] = len(playlists)
+            # Ejecutamos la sincronización según las opciones
+            if sync_playlists_opt:
+                count = sync_service.sync_playlists()
+                results['playlists_synced'] = count
             
-            if sync_saved_tracks:
-                tracks = spotify_service.sync_saved_tracks()
-                results['tracks_synced'] = len(tracks)
+            if sync_saved_tracks_opt:
+                count = sync_service.sync_saved_tracks()
+                results['tracks_synced'] = count
             
-            if sync_top_artists:
-                artists = spotify_service.sync_top_artists()
-                results['artists_synced'] = len(artists)
+            if sync_top_artists_opt:
+                count = sync_service.sync_top_artists()
+                results['artists_synced'] = count
             
             return Response({
                 'message': '¡Sincronización completada exitosamente!',

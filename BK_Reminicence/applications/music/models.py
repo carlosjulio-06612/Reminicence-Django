@@ -141,6 +141,7 @@ class PlaylistSong(models.Model):
         ordering = ['position']
 
 class UserFavoriteSong(models.Model):
+    id = models.AutoField(primary_key=True) 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song = models.ForeignKey(Songs, on_delete=models.CASCADE)
     favorited_at = models.DateTimeField(blank=True, null=True)
@@ -151,6 +152,7 @@ class UserFavoriteSong(models.Model):
         unique_together = (('user', 'song'),)
 
 class UserFavoriteArtist(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     artist = models.ForeignKey(Artists, on_delete=models.CASCADE)
     favorited_at = models.DateTimeField(blank=True, null=True)

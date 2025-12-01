@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from applications.spotify_api.models import SpotifyUserToken
-
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer para información básica del usuario"""
@@ -160,3 +162,55 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['user'] = UserSerializer(self.user).data
         
         return data
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    """Valida el email para la solicitud de reset"""
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        # Opcional: Por seguridad, a veces no se debe revelar si el email existe o no.
+        # Pero para UX, validamos si existe.
+        if not User.objects.filter(email=value.lower()).exists():
+            raise serializers.ValidationError("No existe ningún usuario registrado con este correo electrónico.")
+        return value.lower()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    """Valida el token, uid y las nuevas contraseñas"""
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(
+        write_only=True,
+        validators=[validate_password],
+        style={'input_type': 'password'}
+    )
+    re_new_password = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
+    def validate(self, attrs):
+        # 1. Validar que las contraseñas coincidan
+        if attrs['new_password'] != attrs['re_new_password']:
+            raise serializers.ValidationError({"new_password": "Las contraseñas no coinciden."})
+
+        # 2. Decodificar UID
+        try:
+            uid = force_str(urlsafe_base64_decode(attrs['uid']))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise serializers.ValidationError({"token": "Enlace inválido o usuario no encontrado."})
+
+        # 3. Validar Token
+        if not default_token_generator.check_token(user, attrs['token']):
+            raise serializers.ValidationError({"token": "El enlace ha expirado o es inválido."})
+
+        # Guardamos el usuario en el contexto para usarlo en el save/view
+        self.context['user'] = user
+        return attrs
+
+    def save(self):
+        user = self.context['user']
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user
