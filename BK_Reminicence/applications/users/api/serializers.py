@@ -99,7 +99,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    """Serializer para cambio de contraseña"""
+    """Serializer para cambio de contraseña desde el perfil"""
     old_password = serializers.CharField(
         required=True,
         write_only=True,
@@ -111,10 +111,12 @@ class ChangePasswordSerializer(serializers.Serializer):
         validators=[validate_password],
         style={'input_type': 'password'}
     )
-    new_password2 = serializers.CharField(
+    # CAMBIO: new_password2 -> confirm_password
+    confirm_password = serializers.CharField(
         required=True,
         write_only=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
+        label="Confirmar contraseña"
     )
     
     def validate_old_password(self, value):
@@ -126,7 +128,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     
     def validate(self, attrs):
         """Validar que las nuevas contraseñas coincidan"""
-        if attrs['new_password'] != attrs['new_password2']:
+        if attrs['new_password'] != attrs['confirm_password']:
             raise serializers.ValidationError({
                 "new_password": "Las contraseñas no coinciden."
             })

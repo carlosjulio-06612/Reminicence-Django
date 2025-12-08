@@ -28,7 +28,7 @@ SPOTIFY_CLIENT_ID = get_secret("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = get_secret("SPOTIFY_CLIENT_SECRET")
 
 
-SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:8000/spotify/callback/'
+SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:5173/callback'
 
 
 BASE_URL = "https://api.spotify.com/v1/me/player"

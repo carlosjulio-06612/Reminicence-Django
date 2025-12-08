@@ -17,10 +17,10 @@ urlpatterns = [
     path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
-    # Password Reset endpoints (NUEVOS)
+    # Password Reset endpoints
     path('users/password_reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('users/password_reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     
-    
+    # Router debe ir AL FINAL
     path('', include(router.urls)),
 ]

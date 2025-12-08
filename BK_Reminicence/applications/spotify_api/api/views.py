@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from ..utils import get_user_spotify_token 
 
 from ..models import SpotifyUserToken
 from ..utils import (
@@ -26,7 +27,8 @@ from .serializers import (
     SeekTrackSerializer,
     ShuffleSerializer,
     RepeatSerializer,
-    SpotifyErrorSerializer
+    SpotifyErrorSerializer,
+    VolumeControlSerializer
 )
 
 
@@ -505,6 +507,144 @@ class RepeatPlaybackView(APIView):
             return Response({
                 'status': 'success',
                 'message': f'Modo repetición: {repeat_state}'
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            
+# Agregar esta vista al archivo views.py de spotify_api
+
+class SpotifyUserProfileView(APIView):
+    """
+    GET: Obtener perfil completo del usuario de Spotify
+    
+    Retorna información del perfil incluyendo:
+    - display_name: Nombre de usuario en Spotify
+    - email: Email del usuario
+    - images: Array de imágenes de perfil en diferentes tamaños
+    - product: Tipo de cuenta (premium, free)
+    - followers: Número de seguidores
+    - external_urls: Link al perfil en Spotify
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        try:
+            spotify_service = SpotifyService(request.user)
+            if not spotify_service.sp:
+                return Response(
+                    {'error': 'Spotify no está conectado'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Obtener perfil del usuario actual
+            profile = spotify_service.sp.current_user()
+            
+            if not profile:
+                return Response(
+                    {'error': 'No se pudo obtener el perfil de Spotify'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            
+            # Formatear respuesta con datos relevantes
+            profile_data = {
+                'id': profile.get('id'),
+                'display_name': profile.get('display_name'),
+                'email': profile.get('email'),
+                'images': profile.get('images', []),
+                'product': profile.get('product', 'free'),
+                'followers': profile.get('followers', {}).get('total', 0),
+                'external_urls': profile.get('external_urls', {}),
+                'uri': profile.get('uri'),
+                'type': profile.get('type'),
+                'country': profile.get('country')
+            }
+            
+            return Response(profile_data, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Error al obtener perfil de Spotify: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class SpotifyTokenView(APIView):
+    """
+    GET: Retorna el access_token actual del usuario.
+    Esencial para el Web Playback SDK en el frontend.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        token = get_user_spotify_token(request.user)
+        
+        if not token:
+            return Response(
+                {'error': 'No se pudo obtener el token. Vincula tu cuenta de Spotify.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+            
+        return Response({'token': token}, status=status.HTTP_200_OK)
+    
+class TransferPlaybackView(APIView):
+    """
+    PUT: Transferir la reproducción a un nuevo dispositivo
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request):
+        try:
+            spotify_service = SpotifyService(request.user)
+            if not spotify_service.sp:
+                return Response({'error': 'No conectado a Spotify'}, status=401)
+
+            device_id = request.data.get('device_id')
+            play = request.data.get('play', False)
+            
+            if not device_id:
+                return Response({'error': 'Device ID requerido'}, status=400)
+
+            # Spotipy a veces prefiere el ID dentro de una lista, aunque acepta string.
+            # Lo forzamos a string por seguridad.
+            spotify_service.sp.transfer_playback(device_id=str(device_id), force_play=play)
+            
+            return Response({'status': 'success', 'message': 'Transferido'})
+            
+        except Exception as e:
+            # Imprimir el error real en la consola de Django para debug
+            print(f"🔥 Error en TransferPlaybackView: {e}")
+            return Response({'error': str(e)}, status=400)
+        
+class SetVolumeView(APIView):
+    """
+    PUT: Cambiar el volumen de reproducción
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request):
+        try:
+            spotify_service = SpotifyService(request.user)
+            if not spotify_service.sp:
+                return Response(
+                    {'error': 'Spotify no está conectado'},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+            
+            serializer = VolumeControlSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            
+            volume_percent = serializer.validated_data['volume_percent']
+            device_id = serializer.validated_data.get('device_id')
+            
+            # Llamada a la librería Spotipy
+            spotify_service.sp.volume(volume_percent, device_id=device_id)
+            
+            return Response({
+                'status': 'success', 
+                'message': f'Volumen cambiado a {volume_percent}%'
             })
             
         except Exception as e:

@@ -103,17 +103,23 @@ class UserViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'])
     def change_password(self, request):
-        """Cambiar contraseña del usuario actual"""
+        
         serializer = ChangePasswordSerializer(
             data=request.data,
             context={'request': request}
         )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
         
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        serializer.save()
         return Response({
-            'message': '¡Tu contraseña ha sido cambiada exitosamente!'
-        })
+            'message': '¡Tu contraseña ha sido cambiada exitosamente!',
+            'success': True
+        }, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['delete'])
     def delete_account(self, request):

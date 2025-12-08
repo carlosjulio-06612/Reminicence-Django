@@ -149,12 +149,66 @@ class SongMinimalSerializer(serializers.ModelSerializer):
 # ===================================================================
 
 class PlaylistSongSerializer(serializers.ModelSerializer):
-    """Serializer para canciones dentro de una playlist"""
-    song = SongMinimalSerializer(read_only=True)
+    """Serializer para canciones dentro de una playlist - MEJORADO con IDs"""
+    song = serializers.SerializerMethodField()
     
     class Meta:
         model = PlaylistSong
         fields = ['song', 'position', 'date_added']
+    
+    def get_song(self, obj):
+        """
+        🔥 MEJORADO: Incluir IDs completos de artista y álbum
+        """
+        song = obj.song
+        
+        # Obtener artista e ID desde el álbum
+        artist = song.album.artist if song.album else None
+        artist_id = artist.artist_id if artist else None
+        artist_name = artist.name if artist else 'Desconocido'
+        
+        # Obtener álbum e ID
+        album = song.album
+        album_id = album.album_id if album else None
+        album_title = album.title if album else 'Desconocido'
+        album_cover = album.cover_image_url if album else ''
+        
+        return {
+            'song_id': song.song_id,
+            'id': song.song_id,
+            'spotify_id': song.spotify_id,
+            'title': song.title,
+            'name': song.title,  # Alias para compatibilidad
+            'duration': song.duration,
+            'duration_ms': song.duration,
+            'preview_url': song.preview_url,
+            'explicit_content': song.explicit_content,
+            
+            # 🔥 IDs de artista
+            'artist_id': artist_id,
+            'artist_name': artist_name,
+            'artists': [
+                {
+                    'id': artist_id,
+                    'artist_id': artist_id,
+                    'spotify_id': artist.spotify_id if artist else None,
+                    'name': artist_name
+                }
+            ] if artist else [],
+            
+            # 🔥 IDs de álbum
+            'album_id': album_id,
+            'album_name': album_title,
+            'album_title': album_title,
+            'album_cover': album_cover,
+            'album': {
+                'id': album_id,
+                'album_id': album_id,
+                'spotify_id': album.spotify_id if album else None,
+                'name': album_title,
+                'images': [{'url': album_cover}] if album_cover else []
+            } if album else None
+        }
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -341,3 +395,19 @@ class SyncStatusSerializer(serializers.Serializer):
     last_sync = serializers.DateTimeField(allow_null=True)
     playlists_synced = serializers.IntegerField()
     message = serializers.CharField()
+
+class PlaybackHistorySerializer(serializers.ModelSerializer):
+    """Serializer para el historial de reproducción"""
+    song = SongMinimalSerializer(read_only=True)
+    
+    class Meta:
+        from ..models import PlaybackHistory # Importación local para evitar ciclos
+        model = PlaybackHistory
+        fields = ['playback_id', 'song', 'playback_date', 'playback_duration']
+
+class MusicStatsSerializer(serializers.Serializer):
+    """Serializer para estadísticas de usuario"""
+    total_songs_played = serializers.IntegerField()
+    total_minutes_listened = serializers.IntegerField()
+    favorite_genre = serializers.CharField()
+    total_favorites = serializers.IntegerField()
