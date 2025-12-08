@@ -10,6 +10,8 @@ from applications.music.sync_service import SpotifySyncService
 from applications.core.spotify_service import SpotifyService 
 from ..models import PlaybackHistory, Devices 
 from .serializers import PlaybackHistorySerializer
+from django.db.models import Q, Count, Sum, Max
+from django.utils import timezone
 from ..models import (
     Artists,
     Albums,
@@ -394,8 +396,11 @@ class PlaylistViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='add_song')
     def add_song(self, request, pk=None):
+        """
+        Agregar canción a playlist (soporta Spotify IDs y PKs locales)
+        """
         playlist = self.get_object()
         song_id = request.data.get('song_id')
         
@@ -403,21 +408,23 @@ class PlaylistViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Se requiere song_id'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            # Buscar por PK o Spotify ID
             if str(song_id).isdigit():
                 song = Songs.objects.get(pk=song_id)
             else:
                 song = Songs.objects.filter(spotify_id=song_id).first()
                 
                 if not song:
-                    # Crear desde Spotify API
                     spotify_service = SpotifyService(request.user)
                     track_data = spotify_service.sp.track(song_id)
                     
                     artist_spotify_id = track_data['artists'][0]['id']
                     artist, _ = Artists.objects.get_or_create(
                         spotify_id=artist_spotify_id,
-                        defaults={'name': track_data['artists'][0]['name'], 'image_url': ''}
+                        defaults={
+                            'name': track_data['artists'][0]['name'], 
+                            'image_url': '',
+                            'data_source': 'spotify'
+                        }
                     )
                     
                     album_spotify_id = track_data['album']['id']
@@ -427,7 +434,8 @@ class PlaylistViewSet(viewsets.ModelViewSet):
                             'title': track_data['album']['name'],
                             'artist': artist,
                             'cover_image_url': track_data['album']['images'][0]['url'] if track_data['album']['images'] else '',
-                            'release_date': track_data['album']['release_date']
+                            'release_date': track_data['album']['release_date'],
+                            'data_source': 'spotify'
                         }
                     )
                     
@@ -438,62 +446,76 @@ class PlaylistViewSet(viewsets.ModelViewSet):
                         duration=track_data['duration_ms'],
                         spotify_uri=track_data['uri'],
                         preview_url=track_data.get('preview_url'),
-                        explicit_content=track_data.get('explicit', False)
+                        explicit_content=track_data.get('explicit', False),
+                        data_source='spotify'
                     )
-            
             if PlaylistSong.objects.filter(playlist=playlist, song=song).exists():
                 return Response({'error': 'La canción ya está en esta playlist'}, status=status.HTTP_400_BAD_REQUEST)
             
-            PlaylistSong.objects.create(playlist=playlist, song=song, added_by=request.user)
+            max_pos = PlaylistSong.objects.filter(playlist=playlist).aggregate(Max('position'))['position__max']
+            new_position = (max_pos or 0) + 1
+
+            PlaylistSong.objects.create(
+                playlist=playlist,
+                song=song,
+                added_by_user=request.user,  
+                position=new_position,     
+                date_added=timezone.now()   
+            )
             
             return Response({'message': f'Canción "{song.title}" agregada a "{playlist.name}"'}, status=status.HTTP_201_CREATED)
             
         except Exception as e:
+            # Imprimir error en consola del servidor para debug
+            print(f"Error adding song: {e}")
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@action(detail=True, methods=['post'])
-def remove_song(self, request, pk=None):
-    """
-    Eliminar canción de playlist (soporta Spotify IDs y PKs locales)
-    """
-    playlist = self.get_object()
-    song_id = request.data.get('song_id')
-    
-    if not song_id:
-        return Response(
-            {'error': 'Se requiere song_id'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    
-    try:
-        if str(song_id).isdigit():
-            playlist_song = PlaylistSong.objects.get(
-                playlist=playlist,
-                song__pk=song_id
-            )
-        else:
-            playlist_song = PlaylistSong.objects.get(
-                playlist=playlist,
-                song__spotify_id=song_id
+
+    @action(detail=True, methods=['post'], url_path='remove_song')
+    def remove_song(self, request, pk=None):
+        """
+        Eliminar canción de playlist (soporta Spotify IDs y PKs locales)
+        """
+        playlist = self.get_object()
+        song_id = request.data.get('song_id')
+        
+        if not song_id:
+            return Response(
+                {'error': 'Se requiere song_id'},
+                status=status.HTTP_400_BAD_REQUEST
             )
         
-        song_title = playlist_song.song.title
-        playlist_song.delete()
-        
-        return Response({
-            'message': f'Canción "{song_title}" eliminada de "{playlist.name}"'
-        })
-        
-    except PlaylistSong.DoesNotExist:
-        return Response(
-            {'error': 'La canción no está en esta playlist'},
-            status=status.HTTP_404_NOT_FOUND
-        )
-    except Exception as e:
-        return Response(
-            {'error': str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        try:
+            # Buscar la relación específica
+            if str(song_id).isdigit():
+                playlist_song = PlaylistSong.objects.filter(
+                    playlist=playlist,
+                    song__pk=song_id
+                ).first()
+            else:
+                playlist_song = PlaylistSong.objects.filter(
+                    playlist=playlist,
+                    song__spotify_id=song_id
+                ).first()
+            
+            if not playlist_song:
+                return Response(
+                    {'error': 'La canción no está en esta playlist'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            song_title = playlist_song.song.title
+            playlist_song.delete()
+            
+            return Response({
+                'message': f'Canción "{song_title}" eliminada de "{playlist.name}"'
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class FavoriteSongsView(APIView):
