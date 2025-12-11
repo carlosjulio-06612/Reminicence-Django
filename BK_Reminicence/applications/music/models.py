@@ -127,7 +127,6 @@ class SongGenre(models.Model):
         unique_together = (('song', 'genre'),)
 
 class PlaylistSong(models.Model):
-    # NOTA: Este modelo asume que ya ejecutaste el ALTER TABLE para añadir una columna 'id'
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, db_column='playlist_id')
     song = models.ForeignKey(Songs, on_delete=models.CASCADE, db_column='song_id')
     position = models.IntegerField()
